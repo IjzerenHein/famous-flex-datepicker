@@ -1,0 +1,56 @@
+{
+  "name": "famous-flex-datepicker",
+  "version": "0.0.1",
+  "homepage": "https://github.com/IjzerenHein/famous-flex-datepicker",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/IjzerenHein/famous-flex-datepicker.git"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim",
+      "deamdify"
+    ]
+  },
+  "author": {
+    "name": "Hein Rutjes <hrutjes@gmail.com>"
+  },
+  "description": "Date/time picker-wheel for famo.us",
+  "keywords": [
+    "famo.us",
+    "famous",
+    "flex",
+    "famous-flex",
+    "famous-flex-datepicker",
+    "datepicker",
+    "date-picker",
+    "flex-date-picker"
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/IjzerenHein/famous-flex-datepicker/blob/master/LICENSE"
+    }
+  ],
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/IjzerenHein/famous-flex-datepicker/issues"
+  },
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "devDependencies": {
+    "brfs": "latest",
+    "browserify": "latest",
+    "browserify-shim": "latest",
+    "deamdify": "latest",    
+    "grunt": "latest",
+    "grunt-eslint": "latest",
+    "grunt-jscs": "latest",
+    "grunt-jsdoc-to-markdown": "latest"
+  },
+  "files": [
+    "src",
+    "LICENSE"
+  ]
+}
