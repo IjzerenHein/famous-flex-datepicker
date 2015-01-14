@@ -20,42 +20,31 @@ define(function(require, exports, module) {
 
     var Surface = require('famous/core/Surface');
 
-        /*function getNextMonth(date, prev) {
-        if (prev) {
-            if (date.getMonth() === 11) {
-                return new Date(date.getFullYear() + 1, 0, 1);
-            }
-            else {
-                return new Date(date.getFullYear(), date.getMonth() + 1, 1);
-            }
-        }
-        else {
-            if (date.getMonth() === 0) {
-                return new Date(date.getFullYear() - 1, 11, 1);
-            }
-            else {
-                return new Date(date.getFullYear(), date.getMonth() - 1, 1);
-            }
-        }
-    }*/
-
     /**
-     * Helper function for formatting a value with a least 2 decimal places.
+     * Helper functions for formatting values with X decimal places.
      */
-    function decimal2(renderable) {
-        return ('0' + renderable.date[this.get]()).slice(-2);
+    function decimal1(date) {
+        return ('' + date[this.get]());
     }
-    function decimal3(renderable) {
-        return ('00' + renderable.date[this.get]()).slice(-3);
+    function decimal2(date) {
+        return ('0' + date[this.get]()).slice(-2);
     }
-    function decimal4(renderable) {
-        return ('000' + renderable.date[this.get]()).slice(-4);
+    function decimal3(date) {
+        return ('00' + date[this.get]()).slice(-3);
+    }
+    function decimal4(date) {
+        return ('000' + date[this.get]()).slice(-4);
     }
 
     /**
      * Base component class
      */
-    function Base() {
+    function Base(options) {
+        if (options) {
+            for (var key in options) {
+                this[key] = options[key];
+            }
+        }
     }
     Base.prototype.step = 1;
     Base.prototype.getComponent = function(date) {
@@ -64,102 +53,50 @@ define(function(require, exports, module) {
     Base.prototype.setComponent = function(date, value) {
         return date[this.set](value);
     };
-    Base.prototype.format = function(renderable) {
+    Base.prototype.format = function(date) {
         return 'overide to implement';
     };
-    Base.prototype.getNext = function(renderable) {
-        var date = new Date(renderable.date.getTime());
-        var newVal = this.getComponent(date) + this.step;
-        if ((this.max !== undefined) && (newVal > this.max)) {
-            if (!this.loop) {
-                return undefined;
-            }
-            newVal = newVal % (this.max + 1);
-        }
-        this.setComponent(date, newVal);
-        return this.create(date);
+    Base.prototype.createNext = function(renderable) {
+        return this.create(this.getNext(renderable.date));
     };
-    Base.prototype.getPrevious = function(renderable) {
-        var date = new Date(renderable.date.getTime());
-        var newVal = this.getComponent(date) - this.step;
-        if ((this.min !== undefined) && (newVal < newVal)) {
+    Base.prototype.getNext = function(date) {
+        date = new Date(date.getTime());
+        var newVal = this.getComponent(date) + this.step;
+        if ((this.upperBound !== undefined) && (newVal >= this.upperBound)) {
             if (!this.loop) {
                 return undefined;
             }
-            newVal = newVal % (this.max + 1);
+            newVal = Math.max(newVal % this.upperBound, this.lowerBound || 0);
         }
         this.setComponent(date, newVal);
-        return this.create(date);
+        return date;
+    };
+    Base.prototype.createPrevious = function(renderable) {
+        return this.create(this.getPrevious(renderable.date));
+    };
+    Base.prototype.getPrevious = function(date) {
+        date = new Date(date.getTime());
+        var newVal = this.getComponent(date) - this.step;
+        if ((this.lowerBound !== undefined) && (newVal < newVal)) {
+            if (!this.loop) {
+                return undefined;
+            }
+            newVal = newVal % this.upperBound;
+        }
+        this.setComponent(date, newVal);
+        return date;
     };
     Base.prototype.create = function(date) {
+        date = date || new Date();
         var surface = new Surface({
-            classes: ['famous-flex-datepicker-item']
+            classes: ['famous-flex-datepicker-item'],
+            content: '<div>' + this.format(date) + '</div>'
         });
-        surface.date = date || new Date();
-        surface.setContent('<div>' + this.format(surface) + '</div>');
+        surface.date = date;
         return surface;
     };
-
-    /**
-     * Full-day component
-     */
-    function FullDay() {
-        Base.apply(this, arguments);
-    }
-    FullDay.prototype = Object.create(Base.prototype);
-    FullDay.prototype.constructor = FullDay;
-    FullDay.prototype.sizeRatio = 2;
-    FullDay.prototype.step = 1;
-    FullDay.prototype.set = 'setDate';
-    FullDay.prototype.get = 'getDate';
-    FullDay.prototype.format = function(renderable) {
-        return renderable.date.toLocaleDateString();
-    };
-
-    /**
-     * Week-day component
-     */
-    function WeekDay() {
-        Base.apply(this, arguments);
-    }
-    WeekDay.prototype = Object.create(Base.prototype);
-    WeekDay.prototype.constructor = WeekDay;
-    WeekDay.prototype.sizeRatio = 2;
-    WeekDay.prototype.min = 0;
-    WeekDay.prototype.max = 6;
-    WeekDay.prototype.step = 1;
-    WeekDay.prototype.loop = true;
-    WeekDay.prototype.set = 'setDate';
-    WeekDay.prototype.get = 'getDate';
-    WeekDay.prototype.strings = [
-        'Sunday', 'Monday', 'Tuesday', 'Wednesday',
-        'Thursday', 'Friday', 'Saturday'
-    ];
-    WeekDay.prototype.format = function(renderable) {
-        return this.strings[renderable.date.getDay()];
-    };
-
-    /**
-     * Month component
-     */
-    function Month() {
-        Base.apply(this, arguments);
-    }
-    Month.prototype = Object.create(Base.prototype);
-    Month.prototype.constructor = Month;
-    Month.prototype.sizeRatio = 2;
-    Month.prototype.min = 0;
-    Month.prototype.max = 11;
-    Month.prototype.step = 1;
-    Month.prototype.loop = true;
-    Month.prototype.set = 'setMonth';
-    Month.prototype.get = 'getMonth';
-    Month.prototype.strings = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    Month.prototype.format = function(renderable) {
-        return this.strings[renderable.date.getMonth()];
+    Base.prototype.destroy = function(renderable) {
+        // perform any cleanup here if neccesary
     };
 
     /**
@@ -178,6 +115,85 @@ define(function(require, exports, module) {
     Year.prototype.get = 'getFullYear';
 
     /**
+     * Month component
+     */
+    function Month() {
+        Base.apply(this, arguments);
+    }
+    Month.prototype = Object.create(Base.prototype);
+    Month.prototype.constructor = Month;
+    Month.prototype.sizeRatio = 2;
+    Month.prototype.lowerBound = 0;
+    Month.prototype.upperBound = 12;
+    Month.prototype.step = 1;
+    Month.prototype.loop = true;
+    Month.prototype.set = 'setMonth';
+    Month.prototype.get = 'getMonth';
+    Month.prototype.strings = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    Month.prototype.format = function(date) {
+        return this.strings[date.getMonth()];
+    };
+
+    /**
+     * Full-day component
+     */
+    function FullDay() {
+        Base.apply(this, arguments);
+    }
+    FullDay.prototype = Object.create(Base.prototype);
+    FullDay.prototype.constructor = FullDay;
+    FullDay.prototype.sizeRatio = 2;
+    FullDay.prototype.step = 1;
+    FullDay.prototype.set = 'setDate';
+    FullDay.prototype.get = 'getDate';
+    FullDay.prototype.format = function(date) {
+        return date.toLocaleDateString();
+    };
+
+    /**
+     * Week-day component
+     */
+    function WeekDay() {
+        Base.apply(this, arguments);
+    }
+    WeekDay.prototype = Object.create(Base.prototype);
+    WeekDay.prototype.constructor = WeekDay;
+    WeekDay.prototype.sizeRatio = 2;
+    WeekDay.prototype.lowerBound = 0;
+    WeekDay.prototype.upperBound = 7;
+    WeekDay.prototype.step = 1;
+    WeekDay.prototype.loop = true;
+    WeekDay.prototype.set = 'setDate';
+    WeekDay.prototype.get = 'getDate';
+    WeekDay.prototype.strings = [
+        'Sunday', 'Monday', 'Tuesday', 'Wednesday',
+        'Thursday', 'Friday', 'Saturday'
+    ];
+    WeekDay.prototype.format = function(date) {
+        return this.strings[date.getDay()];
+    };
+
+    /**
+     * Day component
+     */
+    function Day() {
+        Base.apply(this, arguments);
+    }
+    Day.prototype = Object.create(Base.prototype);
+    Day.prototype.constructor = Day;
+    Day.prototype.format = decimal1;
+    Day.prototype.sizeRatio = 1;
+    Day.prototype.lowerBound = 0;
+    Day.prototype.upperBound = 31;
+    Day.prototype.step = 1;
+    Day.prototype.loop = true;
+    Day.prototype.set = 'setDate';
+    Day.prototype.get = 'getDate';
+
+    /**
      * Hour component
      */
     function Hour() {
@@ -187,8 +203,8 @@ define(function(require, exports, module) {
     Hour.prototype.constructor = Hour;
     Hour.prototype.format = decimal2;
     Hour.prototype.sizeRatio = 1;
-    Hour.prototype.min = 0;
-    Hour.prototype.max = 59;
+    Hour.prototype.lowerBound = 0;
+    Hour.prototype.upperBound = 24;
     Hour.prototype.step = 1;
     Hour.prototype.loop = true;
     Hour.prototype.set = 'setHours';
@@ -204,8 +220,8 @@ define(function(require, exports, module) {
     Minute.prototype.constructor = Minute;
     Minute.prototype.format = decimal2;
     Minute.prototype.sizeRatio = 1;
-    Minute.prototype.min = 0;
-    Minute.prototype.max = 59;
+    Minute.prototype.lowerBound = 0;
+    Minute.prototype.upperBound = 60;
     Minute.prototype.step = 1;
     Minute.prototype.loop = true;
     Minute.prototype.set = 'setMinutes';
@@ -221,8 +237,8 @@ define(function(require, exports, module) {
     Second.prototype.constructor = Second;
     Second.prototype.format = decimal2;
     Second.prototype.sizeRatio = 1;
-    Second.prototype.min = 0;
-    Second.prototype.max = 59;
+    Second.prototype.lowerBound = 0;
+    Second.prototype.upperBound = 60;
     Second.prototype.step = 1;
     Second.prototype.loop = true;
     Second.prototype.set = 'setSeconds';
@@ -238,8 +254,8 @@ define(function(require, exports, module) {
     Millisecond.prototype.constructor = Millisecond;
     Millisecond.prototype.format = decimal3;
     Millisecond.prototype.sizeRatio = 1;
-    Millisecond.prototype.min = 0;
-    Millisecond.prototype.max = 999;
+    Millisecond.prototype.lowerBound = 0;
+    Millisecond.prototype.upperBound = 1000;
     Millisecond.prototype.step = 1;
     Millisecond.prototype.loop = true;
     Millisecond.prototype.set = 'setMilliseconds';
@@ -251,14 +267,10 @@ define(function(require, exports, module) {
         Month: Month,
         FullDay: FullDay,
         WeekDay: WeekDay,
+        Day: Day,
         Hour: Hour,
         Minute: Minute,
         Second: Second,
-        Millisecond: Millisecond,
-        formatters: {
-            decimal2: decimal2,
-            decimal3: decimal3,
-            decimal4: decimal4
-        }
+        Millisecond: Millisecond
     };
 });

@@ -26,7 +26,7 @@ define(function(require, exports, module) {
     var ScrollController = require('famous-flex/ScrollController');
     var WheelLayout = require('famous-flex/layouts/WheelLayout');
     var ProportionalLayout = require('famous-flex/layouts/ProportionalLayout');
-    var InfiniteViewSequence = require('./InfiniteViewSequence');
+    var VirtualViewSequence = require('./VirtualViewSequence');
     var DatePickerComponents = require('./DatePickerComponents');
 
     /**
@@ -39,13 +39,15 @@ define(function(require, exports, module) {
     function DatePicker(options) {
         View.apply(this, arguments);
 
+        this._date = new Date((options && options.date) ? options.date.getTime() : undefined);
         _createLayout.call(this);
-        _updateComponents.call(this);
+        _createComponents.call(this);
 
         this.setOptions(this.options);
     }
     DatePicker.prototype = Object.create(View.prototype);
     DatePicker.prototype.constructor = DatePicker;
+    DatePicker.Component = DatePickerComponents;
 
     DatePicker.DEFAULT_OPTIONS = {
         perspective: 1000,
@@ -57,12 +59,9 @@ define(function(require, exports, module) {
             classes: ['famous-flex-datepicker']
         },
         components: [
-            new DatePickerComponents.Year(),
-            new DatePickerComponents.Month(),
-            new DatePickerComponents.WeekDay(),
-            new DatePickerComponents.FullDay(),
-            new DatePickerComponents.Hour(),
-            new DatePickerComponents.Minute()
+            new DatePicker.Component.FullDay(),
+            new DatePicker.Component.Hour(),
+            new DatePicker.Component.Minute()
         ]
     };
 
@@ -75,18 +74,110 @@ define(function(require, exports, module) {
      */
     DatePicker.prototype.setOptions = function(options) {
         View.prototype.setOptions.call(this, options);
+        if (!this.layout) {
+            return this;
+        }
         if (options.perspective !== undefined) {
             this.container.context.setPerspective(options.perspective);
         }
         if (options.components) {
-            _updateComponents.call(this);
+            _createComponents.call(this);
         }
         if (options.wheelOptions !== undefined) {
             for (var i = 0; i < this.components.length; i++) {
                 this.components[i].scrollView.setLayoutOptions(options.wheelOptions);
             }
         }
+        return this;
     };
+
+    /**
+     * Set the selected date.
+     *
+     * @param {Date} date Selected date/time.
+     * @return {DatePicker} this
+     */
+    DatePicker.prototype.setDate = function(date) {
+        this._date.setTime(date.getTime());
+        _setDateToScrollWheels.call(this, this._date);
+        return this;
+    };
+
+    /**
+     * Get the selected date.
+     *
+     * @return {Date} selected date
+     */
+    DatePicker.prototype.getDate = function() {
+        return this._date;
+    };
+
+    /**
+     * Selects the given date into the scrollwheels (causes scrolling)
+     */
+    function _setDateToScrollWheels(date) {
+        for (var i = 0; i < this.scrollWheels.length; i++) {
+            var scrollWheel = this.scrollWheels[i];
+            var component = scrollWheel.component;
+            var item = scrollWheel.scrollView.getFirstVisibleItem();
+            if (item && item.viewSequence) {
+                var viewSequence = item.viewSequence;
+                var renderNode = item.viewSequence.get();
+                var currentValue = component.getComponent(renderNode.date);
+                var destValue = component.getComponent(date);
+
+                // Determine the direction to scroll to
+                var steps = 0;
+                if (currentValue !== destValue) {
+                    steps = destValue - currentValue;
+                    // when loop is enables, check whether there is a faster path
+                    if (component.loop) {
+                        var revSteps = (steps < 0) ? (steps + component.upperBound) : (steps - component.upperBound);
+                        if (Math.abs(revSteps) < Math.abs(steps)) {
+                            steps = revSteps;
+                        }
+                    }
+                }
+
+                // Scroll to the item
+                if (!steps) {
+                    scrollWheel.scrollView.goToRenderNode(renderNode);
+                }
+                else {
+                    while (currentValue !== destValue) {
+                        viewSequence = (steps > 0) ? viewSequence.getNext() : viewSequence.getPrevious();
+                        renderNode = viewSequence ? viewSequence.get() : undefined;
+                        if (!renderNode) {
+                            break;
+                        }
+                        currentValue = component.getComponent(renderNode.date);
+                        if (steps > 0) {
+                            scrollWheel.scrollView.goToNextPage();
+                        }
+                        else {
+                            scrollWheel.scrollView.goToPreviousPage();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Gets the selected date from all the scroll-wheels.
+     */
+    function _getDateFromScrollWheels() {
+        var date = new Date(this._date);
+        for (var i = 0; i < this.scrollWheels.length; i++) {
+            var scrollWheel = this.scrollWheels[i];
+            var component = scrollWheel.component;
+            var item = scrollWheel.scrollView.getFirstVisibleItem();
+            if (item && item.renderNode) {
+                component.setComponent(date, component.getComponent(item.renderNode.date));
+            }
+        }
+        return date;
+    }
 
     /**
      * Sets up the overal layout
@@ -98,7 +189,7 @@ define(function(require, exports, module) {
         this.layout = new LayoutController({
             layout: ProportionalLayout,
             layoutOptions: {
-                ratios: [1]
+                ratios: []
             },
             direction: Utility.Direction.X,
             flow: true,
@@ -110,17 +201,55 @@ define(function(require, exports, module) {
     }
 
     /**
+     * Emit scrollstart event when a wheel starts scrolling
+     */
+    function _scrollWheelScrollStart() {
+        this._scrollingCount++;
+        if (this._scrollingCount === 1) {
+            this._eventOutput.emit('scrollstart', {
+                target: this
+            });
+        }
+    }
+
+    /**
+     * Emit scrollend event whenever all scrolling has come to a halt
+     */
+    function _scrollWheelScrollEnd() {
+        this._scrollingCount--;
+        if (this._scrollingCount === 0) {
+            this._eventOutput.emit('scrollend', {
+                target: this,
+                date: this._date
+            });
+        }
+    }
+
+    /**
+     * Emit scrollend event whenever all scrolling has come to a halt
+     */
+    function _scrollWheelPageChange() {
+        this._date = _getDateFromScrollWheels.call(this);
+        this._eventOutput.emit('datechange', {
+            target: this,
+            date: this._date
+        });
+    }
+
+    /**
      * Updates the date/time components
      */
-    function _updateComponents() {
+    function _createComponents() {
         this.scrollWheels = [];
+        this._scrollingCount = 0;
         var dataSource = [];
         var sizeRatios = [];
 
         for (var i = 0; i < this.options.components.length; i++) {
             var component = this.options.components[i];
-            var viewSequence = new InfiniteViewSequence({
-                delegate: component
+            var viewSequence = new VirtualViewSequence({
+                factory: component,
+                value: component.create(this._date)
             });
             var scrollView = new ScrollController({
                 layout: WheelLayout,
@@ -129,8 +258,13 @@ define(function(require, exports, module) {
                 direction: Utility.Direction.Y,
                 dataSource: viewSequence,
                 mouseMove: true,
-                autoPipeEvents: true
+                autoPipeEvents: true,
+                paginated: false,
+                debug: true
             });
+            scrollView.on('scrollstart', _scrollWheelScrollStart.bind(this));
+            scrollView.on('scrollend', _scrollWheelScrollEnd.bind(this));
+            scrollView.on('pagechange', _scrollWheelPageChange.bind(this));
             this.scrollWheels.push({
                 component: component,
                 scrollView: scrollView,
