@@ -1,31 +1,17 @@
 {
   "name": "famous-flex-datepicker",
+  "private": "true",
   "version": "0.0.1",
   "homepage": "https://github.com/IjzerenHein/famous-flex-datepicker",
   "repository": {
     "type": "git",
     "url": "git://github.com/IjzerenHein/famous-flex-datepicker.git"
   },
-  "browserify": {
-    "transform": [
-      "browserify-shim",
-      "deamdify"
-    ]
-  },
   "author": {
     "name": "Hein Rutjes <hrutjes@gmail.com>"
   },
-  "description": "Date/time picker-wheel for famo.us",
-  "keywords": [
-    "famo.us",
-    "famous",
-    "flex",
-    "famous-flex",
-    "famous-flex-datepicker",
-    "datepicker",
-    "date-picker",
-    "flex-date-picker"
-  ],
+  "description": "Date/time picker/wheel demo for famo.us",
+  "keywords": [],
   "licenses": [
     {
       "type": "MIT",
@@ -40,17 +26,32 @@
     "node": ">= 0.10.0"
   },
   "devDependencies": {
-    "brfs": "latest",
-    "browserify": "latest",
-    "browserify-shim": "latest",
-    "deamdify": "latest",    
+    "css-loader": "^0.7.0",
+    "expose-loader": "^0.5.3",
+    "famous": "^0.3.1",
+    "famous-flex": "latest",
+    "famous-lagometer": "0.0.2",
+    "famous-polyfills": "^0.2.2",
+    "fastclick": "^1.0.3",
+    "file-loader": "^0.6.1",
+    "glob": "^4.0.5",
     "grunt": "latest",
     "grunt-eslint": "latest",
+    "grunt-exec": "latest",
+    "grunt-ftp-deploy": "latest",
     "grunt-jscs": "latest",
-    "grunt-jsdoc-to-markdown": "latest"
+    "html-loader": "^0.2.2",
+    "json-loader": "^0.5.1",
+    "less": "^1.7.4",
+    "less-loader": "^0.7.5",
+    "moment": "^2.9.0",
+    "optimist": "^0.6.1",
+    "script-loader": "^0.6.0",
+    "style-loader": "^0.6.4",
+    "url-loader": "^0.5.5",
+    "webpack": "latest",
+    "webpack-cordova-plugin": "latest",
+    "webpack-dev-server": "latest"
   },
-  "files": [
-    "src",
-    "LICENSE"
-  ]
+  "scripts": {}
 }

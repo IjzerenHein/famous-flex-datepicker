@@ -1,0 +1,21 @@
+body, div {
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    font-weight: bold;
+
+    /* prevent text selection */
+    -moz-user-select: -moz-none;
+   	-khtml-user-select: none;
+   	-webkit-user-select: none;
+   	-ms-user-select: none;
+   	user-select: none;
+}
+
+.famous-flex-datewheel .item > div {
+  text-align: center;
+  font-size: 36px;
+  /* center text vertically */
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
