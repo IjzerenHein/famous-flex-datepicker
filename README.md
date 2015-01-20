@@ -6,7 +6,7 @@ DatePicker demo for famo.us using the [famous-flex](https://github.com/IjzerenHe
 ![Screenshot](screenshot.gif)
 
 
-[View the live demo here](https://rawgit.com/IjzerenHein/famous-flex-chat/master/dist/index.html)
+[View the live demo here](https://rawgit.com/IjzerenHein/famous-flex-datepicker/master/dist/index.html)
 
 
 ## Content
