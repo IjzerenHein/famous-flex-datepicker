@@ -18,7 +18,6 @@ define(function(require) {
     require('famous/core/famous.css');
     require('./styles.css');
     require('./index.html');
-    var moment = require('moment/moment');
     //</webpack>
 
     // import dependencies
@@ -28,8 +27,12 @@ define(function(require) {
     var BkImageSurface = require('famous-bkimagesurface/BkImageSurface');
     var LayoutController = require('famous-flex/LayoutController');
     var HeaderFooterLayout = require('famous-flex/layouts/HeaderFooterLayout');
-    var DateWheel = require('famous-flex/widgets/DateWheel');
-    var Timer = require('famous/utilities/Timer');
+
+    // demos
+    var Clock = require('./clock/Clock');
+    var DatePicker = require('./datepicker/DatePicker');
+    var TimePicker = require('./timepicker/TimePicker');
+    var DateTimePicker = require('./datetimepicker/DateTimePicker');
 
     // create the main context
     var mainContext = Engine.createContext();
@@ -42,113 +45,11 @@ define(function(require) {
 
     // Add examples to scrollview
     var dateWheels = [];
-    _addDateWheel(_createDatePicker(), 'DatePicker');
-    _addDateWheel(_createDateTimePicker(), 'DateTimePicker');
-    _addDateWheel(_createClock(), 'Clock');
-    _addDateWheel(_createTimePicker(), 'TimePicker');
+    _addExample(new DateTimePicker(), 'DateTimePicker example');
+    _addExample(new DatePicker(), 'DatePicker example');
+    _addExample(new TimePicker(), 'TimePicker example');
+    _addExample(new Clock(), 'Clock example');
     scrollView.setDataSource(dateWheels);
-
-    //
-    // Clock example
-    //
-    function _createClock() {
-        var clock = new DateWheel({
-            date: new Date(),
-            wheelLayout: {
-                itemSize: 100,
-                diameter: undefined,
-                radialOpacity: 0
-            },
-            scrollView: {
-                enabled: false
-            },
-            components: [
-                new DateWheel.Component.Hour(),
-                new DateWheel.Component.Minute(),
-                new DateWheel.Component.Second()
-                //new DateWheel.Component.Millisecond()
-            ]
-        });
-
-        // Update click every second
-        Timer.every(function() {
-            clock.setDate(new Date());
-        }, 60);
-        return clock;
-    }
-
-    //
-    // TimePicker example
-    //
-    function _createTimePicker() {
-        var timePicker = new DateWheel({
-            date: new Date(),
-            wheelLayout: {
-                itemSize: 100,
-                diameter: undefined,
-                radialOpacity: 0
-            },
-            components: [
-                new DateWheel.Component.Hour(),
-                new DateWheel.Component.Minute(),
-                new DateWheel.Component.Second()
-                //new DateWheel.Component.Millisecond()
-            ]
-        });
-        return timePicker;
-    }
-
-    //
-    // DatePicker example
-    //
-    function _createDatePicker() {
-        var datePicker = new DateWheel({
-            date: new Date(),
-            wheelLayout: {
-                itemSize: 100,
-                diameter: undefined,
-                radialOpacity: 0
-            },
-            components: [
-                new DateWheel.Component.Day(),
-                new DateWheel.Component.Month({
-                    format: function(date) {
-                        // format full date in current locale using momentjs
-                        return moment(date).format('MMMM');
-                    },
-                    sizeRatio: 2
-                }),
-                new DateWheel.Component.Year()
-            ]
-        });
-        return datePicker;
-    }
-
-    //
-    // DateTimePicker example
-    //
-    function _createDateTimePicker() {
-        var datePicker = new DateWheel({
-            date: new Date(),
-            wheelLayout: {
-                itemSize: 100,
-                diameter: undefined,
-                radialOpacity: 0
-            },
-            components: [
-                new DateWheel.Component.FullDay({
-                    format: function(date) {
-                        // format full date in current locale using momentjs
-                        return moment(date).format('ddd ll');
-                    },
-                    sizeRatio: 4
-                }),
-                new DateWheel.Component.Hour(),
-                new DateWheel.Component.Minute()
-            ]
-        });
-        return datePicker;
-    }
 
     //
     // Footer image
@@ -181,8 +82,9 @@ define(function(require) {
         footer.pipe(scrollView);
         return new LayoutController({
             layout: {dock: [
-                ['bottom', undefined, 10],
+                ['bottom', undefined, 15],
                 ['bottom', 'footer', 100],
+                ['bottom', undefined, 15],
                 ['fill', 'content']
             ]},
             dataSource: {
@@ -195,7 +97,7 @@ define(function(require) {
     //
     // Helper function for adding samples
     //
-    function _addDateWheel(dateWheel, name) {
+    function _addExample(dateWheel, name) {
         var header = new Surface({
             content: name,
             classes: ['header']

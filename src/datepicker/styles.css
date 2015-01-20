@@ -1,0 +1,21 @@
+
+.datepicker-back {
+  background-color: #FFFCFC;
+}
+
+.datepicker-front {
+  border-top: 1px solid #777777;
+  border-bottom: 1px solid #777777;
+  pointer-events: none;
+}
+
+.datepicker .item > div {
+  -color: white;
+  text-align: center;
+  font-size: 40px;
+  font-weight: 100;
+  /* center text vertically */
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}

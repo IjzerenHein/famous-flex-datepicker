@@ -1,0 +1,22 @@
+
+.clock-back {
+  background-color: black;
+}
+
+.clock .item > div, .clock-separator > div {
+  color: white;
+  text-align: center;
+  font-size: 70px;
+  /* center text vertically */
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.clock-separator-1 > div {
+	text-align: right;
+}
+
+.clock-separator-2 > div {
+	text-align: left;
+}
