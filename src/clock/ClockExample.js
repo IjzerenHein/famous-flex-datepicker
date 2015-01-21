@@ -36,11 +36,11 @@ define(function(require, exports, module) {
     ClockExample.prototype.constructor = ClockExample;
 
     ClockExample.DEFAULT_OPTIONS = {
-		sizeRatios: [1.3, 1, 1.3]
+        sizeRatios: [1.3, 1, 1.3]
     };
 
     function _createDatePicker() {
-		this.datePicker = new DatePicker({
+        this.datePicker = new DatePicker({
             date: new Date(),
             wheelLayout: {
                 itemSize: 80,
@@ -69,9 +69,9 @@ define(function(require, exports, module) {
     }
 
     function _createBack() {
-		this.back = new Surface({
-			classes: ['clock-back']
-		});
+        this.back = new Surface({
+            classes: ['clock-back']
+        });
         var mod = new Modifier({
             transform: Transform.translate(0, 0, -1000)
         });
@@ -79,27 +79,27 @@ define(function(require, exports, module) {
     }
 
     function _createSeparators() {
-		var separator1 = new Surface({
-			classes: ['clock-separator', 'clock-separator-1'],
-			content: '<div>:</div>'
-		});
-		var separator2 = new Surface({
-			classes: ['clock-separator', 'clock-separator-2'],
-			content: '<div>:</div>'
-		});
-		var separators = new LayoutController({
-			layout: ProportionalLayout,
-			layoutOptions: {
-				ratios: this.options.sizeRatios
-			},
-			direction: 0,
-			dataSource: [
-				separator1,
-				new RenderNode(),
-				separator2
-			]
-		});
-		this.add(separators);
+        var separator1 = new Surface({
+            classes: ['clock-separator', 'clock-separator-1'],
+            content: '<div>:</div>'
+        });
+        var separator2 = new Surface({
+            classes: ['clock-separator', 'clock-separator-2'],
+            content: '<div>:</div>'
+        });
+        var separators = new LayoutController({
+            layout: ProportionalLayout,
+            layoutOptions: {
+                ratios: this.options.sizeRatios
+            },
+            direction: 0,
+            dataSource: [
+                separator1,
+                new RenderNode(),
+                separator2
+            ]
+        });
+        this.add(separators);
     }
 
     module.exports = ClockExample;
