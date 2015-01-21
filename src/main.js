@@ -29,10 +29,10 @@ define(function(require) {
     var HeaderFooterLayout = require('famous-flex/layouts/HeaderFooterLayout');
 
     // demos
-    var Clock = require('./clock/Clock');
-    var DatePicker = require('./datepicker/DatePicker');
-    var TimePicker = require('./timepicker/TimePicker');
-    var DateTimePicker = require('./datetimepicker/DateTimePicker');
+    var ClockExample = require('./clock/ClockExample');
+    var DateExample = require('./date/DateExample');
+    var TimeExample = require('./time/TimeExample');
+    var DateTimeExample = require('./datetime/DateTimeExample');
 
     // create the main context
     var mainContext = Engine.createContext();
@@ -45,10 +45,10 @@ define(function(require) {
 
     // Add examples to scrollview
     var dateWheels = [];
-    _addExample(new DateTimePicker(), 'DateTimePicker example');
-    _addExample(new DatePicker(), 'DatePicker example');
-    _addExample(new TimePicker(), 'TimePicker example');
-    _addExample(new Clock(), 'Clock example');
+    _addExample(new DateTimeExample(), 'Date + Time example');
+    _addExample(new DateExample(), 'Date example');
+    _addExample(new TimeExample(), 'Time example');
+    //_addExample(new ClockExample(), 'Clock example');
     scrollView.setDataSource(dateWheels);
 
     //
@@ -71,7 +71,8 @@ define(function(require) {
             layoutOptions: {
                 itemSize: undefined
             },
-            paginated: true
+            paginated: true,
+            layoutAll: true
         });
     }
 

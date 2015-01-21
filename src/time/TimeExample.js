@@ -16,48 +16,52 @@ define(function(require, exports, module) {
     // import dependencies
     require('./styles.css');
     var View = require('famous/core/View');
-    var RenderNode = require('famous/core/RenderNode');
     var Surface = require('famous/core/Surface');
     var Modifier = require('famous/core/Modifier');
     var Transform = require('famous/core/Transform');
-    var DateWheel = require('famous-flex/widgets/DateWheel');
-    var LayoutController = require('famous-flex/LayoutController');
-    var ProportionalLayout = require('famous-flex/layouts/ProportionalLayout');
+    var DatePicker = require('famous-flex/widgets/DatePicker');
 
-    function TimePicker(options) {
+    function TimeExample(options) {
         View.apply(this, arguments);
 
         _createDateWheel.call(this);
         _createBack.call(this);
-        _createFront.call(this);
     }
-    TimePicker.prototype = Object.create(View.prototype);
-    TimePicker.prototype.constructor = TimePicker;
+    TimeExample.prototype = Object.create(View.prototype);
+    TimeExample.prototype.constructor = TimeExample;
 
-    TimePicker.DEFAULT_OPTIONS = {
+    TimeExample.DEFAULT_OPTIONS = {
 		itemHeight: 80
     };
 
     function _createDateWheel() {
-		this.dateWheel = new DateWheel({
-            perspective: 0,
+		this.datePicker = new DatePicker({
+            perspective: 500,
             date: new Date(),
             wheelLayout: {
                 itemSize: this.options.itemHeight,
-                diameter: 400,
-                radialOpacity: -0.5
+                diameter: 320,
+                radialOpacity: 0
             },
             container: {
                 classes: ['timepicker']
             },
             components: [
-                new DateWheel.Component.Hour(),
-                new DateWheel.Component.Minute(),
-                new DateWheel.Component.Second()
-            ]
+                new DatePicker.Component.Hour(),
+                new DatePicker.Component.Minute(),
+                new DatePicker.Component.Second()
+            ],
+            overlay: {
+                top: new Surface({
+                    classes: ['timepicker-overlay-top']
+                }),
+                bottom: new Surface({
+                    classes: ['timepicker-overlay-bottom']
+                })
+            }
         });
-        this.add(this.dateWheel);
-        return this.dateWheel;
+        this.add(this.datePicker);
+        return this.datePicker;
     }
 
     function _createBack() {
@@ -70,18 +74,5 @@ define(function(require, exports, module) {
         this.add(mod).add(this.back);
     }
 
-    function _createFront() {
-        this.front = new Surface({
-            classes: ['timepicker-front']
-        });
-        var mod = new Modifier({
-            align: [0, 0.5],
-            origin: [0, 0.5],
-            size: [undefined, this.options.itemHeight],
-            transform: Transform.translate(0, 0, 1)
-        });
-        this.add(mod).add(this.front);
-    }
-
-    module.exports = TimePicker;
+    module.exports = TimeExample;
 });

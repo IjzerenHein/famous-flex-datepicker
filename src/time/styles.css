@@ -1,0 +1,25 @@
+
+.timepicker-back {
+  background-color: #FFFCFC;
+}
+
+.timepicker-overlay-top, .timepicker-overlay-bottom {
+  background-color: rgba(255, 255, 255, 0.6);
+  pointer-events: none;
+}
+
+.timepicker-overlay-top {
+  border-bottom: 1px solid #777777;
+}
+
+.timepicker-overlay-bottom {
+  border-top: 1px solid #777777;
+}
+
+.timepicker .item > div {
+  color: black;
+  text-align: center;
+  font-size: 60px;
+  font-weight: normal;
+  line-height: 80px;
+}

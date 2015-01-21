@@ -18,28 +18,28 @@ define(function(require, exports, module) {
     var View = require('famous/core/View');
     var Surface = require('famous/core/Surface');
     var RenderNode = require('famous/core/RenderNode');
-    var DateWheel = require('famous-flex/widgets/DateWheel');
+    var DatePicker = require('famous-flex/widgets/DatePicker');
     var Timer = require('famous/utilities/Timer');
     var LayoutController = require('famous-flex/LayoutController');
     var ProportionalLayout = require('famous-flex/layouts/ProportionalLayout');
 
-    function Clock(options) {
+    function ClockExample(options) {
         View.apply(this, arguments);
 
-        _createDateWheel.call(this);
+        _createDatePicker.call(this);
         _createBack.call(this);
         _createSeparators.call(this);
         _createLayout.call(this);
     }
-    Clock.prototype = Object.create(View.prototype);
-    Clock.prototype.constructor = Clock;
+    ClockExample.prototype = Object.create(View.prototype);
+    ClockExample.prototype.constructor = ClockExample;
 
-    Clock.DEFAULT_OPTIONS = {
+    ClockExample.DEFAULT_OPTIONS = {
 		sizeRatios: [1.3, 1, 1.3]
     };
 
-    function _createDateWheel() {
-		this.dateWheel = new DateWheel({
+    function _createDatePicker() {
+		this.datePicker = new DatePicker({
             date: new Date(),
             wheelLayout: {
                 itemSize: 80,
@@ -53,10 +53,10 @@ define(function(require, exports, module) {
                 classes: ['clock']
             },
             components: [
-                new DateWheel.Component.Hour({sizeRatio: this.options.sizeRatios[0]}),
-                new DateWheel.Component.Minute({sizeRatio: this.options.sizeRatios[1]}),
-                new DateWheel.Component.Second({sizeRatio: this.options.sizeRatios[2]})
-                //new DateWheel.Component.Millisecond()
+                new DatePicker.Component.Hour({sizeRatio: this.options.sizeRatios[0]}),
+                new DatePicker.Component.Minute({sizeRatio: this.options.sizeRatios[1]}),
+                new DatePicker.Component.Second({sizeRatio: this.options.sizeRatios[2]})
+                //new DatePicker.Component.Millisecond()
             ]
         });
 
@@ -104,11 +104,11 @@ define(function(require, exports, module) {
 			]},
 			dataSource: {
 				back: this.back,
-				content: this.dateWheel
+				content: this.datePicker
 			}
 		});
 		this.add(this.layout);
     }
 
-    module.exports = Clock;
+    module.exports = ClockExample;
 });

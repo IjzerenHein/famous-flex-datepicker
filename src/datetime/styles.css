@@ -3,25 +3,22 @@
   background-color: #FFFCFC;
 }
 
-.datetimepicker-front {
+.datetimepicker-overlay-top, .datetimepicker-overlay-bottom {
   background-color: rgba(255, 255, 255, 0.6);
   pointer-events: none;
 }
 
-.datetimepicker-front-top {
+.datetimepicker-overlay-top {
   border-bottom: 1px solid #777777;
 }
 
-.datetimepicker-front-bottom {
+.datetimepicker-overlay-bottom {
   border-top: 1px solid #777777;
 }
 
 .datetimepicker .item > div {
   text-align: center;
-  font-size: 40px;
+  font-size: 32px;
   font-weight: 100;
-  /* center text vertically */
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
+  line-height: 50px;
 }

@@ -20,54 +20,60 @@ define(function(require, exports, module) {
     var Surface = require('famous/core/Surface');
     var Modifier = require('famous/core/Modifier');
     var Transform = require('famous/core/Transform');
-    var DateWheel = require('famous-flex/widgets/DateWheel');
+    var DatePicker = require('famous-flex/widgets/DatePicker');
 
-    function DatePicker(options) {
+    function DateTimeExample(options) {
         View.apply(this, arguments);
 
-        _createDateWheel.call(this);
+        _createDatePicker.call(this);
         _createBack.call(this);
-        _createFront.call(this);
     }
-    DatePicker.prototype = Object.create(View.prototype);
-    DatePicker.prototype.constructor = DatePicker;
+    DateTimeExample.prototype = Object.create(View.prototype);
+    DateTimeExample.prototype.constructor = DateTimeExample;
 
-    DatePicker.DEFAULT_OPTIONS = {
-		itemHeight: 60
+    DateTimeExample.DEFAULT_OPTIONS = {
+		itemHeight: 50
     };
 
-    function _createDateWheel() {
-		this.dateWheel = new DateWheel({
+    function _createDatePicker() {
+		this.datePicker = new DatePicker({
             date: new Date(),
+            perspective: 500,
             wheelLayout: {
                 itemSize: this.options.itemHeight,
-                diameter: 500,
-                radialOpacity: -1
+                diameter: 320,
+                radialOpacity: -0.2
             },
             container: {
-                classes: ['datepicker']
+                classes: ['datetimepicker']
             },
             components: [
-                new DateWheel.Component.Day(),
-                new DateWheel.Component.Month({
+                new DatePicker.Component.FullDay({
                     format: function(date) {
                         // format full date in current locale using momentjs
-                        return moment(date).format('MMMM');
+                        return moment(date).format('dd DD MMM');
                     },
-                    sizeRatio: 3
-                }),
-                new DateWheel.Component.Year({
                     sizeRatio: 2
+                }),
+                new DatePicker.Component.Hour(),
+                new DatePicker.Component.Minute()
+            ],
+            overlay: {
+                top: new Surface({
+                    classes: ['datetimepicker-overlay-top']
+                }),
+                bottom: new Surface({
+                    classes: ['datetimepicker-overlay-bottom']
                 })
-            ]
+            }
         });
-        this.add(this.dateWheel);
-        return this.dateWheel;
+        this.add(this.datePicker);
+        return this.datePicker;
     }
 
     function _createBack() {
 		this.back = new Surface({
-			classes: ['datepicker-back']
+			classes: ['datetimepicker-back']
 		});
         var mod = new Modifier({
             transform: Transform.translate(0, 0, -1000)
@@ -75,18 +81,5 @@ define(function(require, exports, module) {
         this.add(mod).add(this.back);
     }
 
-    function _createFront() {
-		this.front = new Surface({
-            classes: ['datepicker-front']
-        });
-        var mod = new Modifier({
-            align: [0, 0.5],
-            origin: [0, 0.5],
-            size: [undefined, this.options.itemHeight],
-            transform: Transform.translate(0, 0, 1)
-        });
-        this.add(mod).add(this.front);
-    }
-
-    module.exports = DatePicker;
+    module.exports = DateTimeExample;
 });

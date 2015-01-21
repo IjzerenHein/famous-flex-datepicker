@@ -1,0 +1,25 @@
+
+.datepicker-back {
+  background-color: #FFFCFC;
+}
+
+.datepicker-overlay-top, .datepicker-overlay-bottom {
+  background-color: rgba(255, 255, 255, 0.6);
+  pointer-events: none;
+}
+
+.datepicker-overlay-top {
+  border-bottom: 1px solid #777777;
+}
+
+.datepicker-overlay-bottom {
+  border-top: 1px solid #777777;
+}
+
+.datepicker .item > div {
+  -color: white;
+  text-align: center;
+  font-size: 36px;
+  line-height: 60px;
+  font-weight: 100;
+}
