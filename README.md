@@ -1,7 +1,7 @@
 famous-flex-datepicker
 ==========
 
-DatePicker demo for famo.us using the [famous-flex](https://github.com/IjzerenHein/famous-flex) [DateWheel](https://github.com/IjzerenHein/famous-flex/blob/master/tutorials/DateWheel.md). This project shows how to create a native feeling cross-platform date-picker using famo.us.
+DatePicker demo for famo.us using the [famous-flex](https://github.com/IjzerenHein/famous-flex) DatePicker. This project shows how to create a native feeling cross-platform date-picker using famo.us.
 
 ![Screenshot](screenshot.gif)
 
@@ -9,9 +9,17 @@ DatePicker demo for famo.us using the [famous-flex](https://github.com/IjzerenHe
 [View the live demo here](https://rawgit.com/IjzerenHein/famous-flex-datepicker/master/dist/index.html)
 
 
-## Content
+## Tutorial
 
--	[Source code](./src/main.js)
+-	[DatePicker Tutorial](https://github.com/IjzerenHein/famous-flex/blob/master/tutorials/DatePicker.md)
+
+
+## Examples
+
+-	[Date example](./src/date/DateExample.js) [(CSS)](./src/date/styles.css)
+-	[Date + Time example](./src/datetime/DateTimeExample.js) [(CSS)](./src/datetime/styles.css)
+-	[Time example](./src/time/TimeExample.js) [(CSS)](./src/time/styles.css)
+-	[Clock example](./src/clock/ClockExample.js) [(CSS)](./src/clock/styles.css)
 
 
 ## Build
