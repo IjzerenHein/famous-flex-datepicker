@@ -48,7 +48,7 @@ define(function(require) {
     _addExample(new DateTimeExample(), 'Date + Time example');
     _addExample(new DateExample(), 'Date example');
     _addExample(new TimeExample(), 'Time example');
-    //_addExample(new ClockExample(), 'Clock example');
+    _addExample(new ClockExample(), 'Clock example');
     scrollView.setDataSource(dateWheels);
 
     //

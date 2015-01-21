@@ -58,14 +58,19 @@ define(function(require, exports, module) {
             new DatePicker.Component.Hour({sizeRatio: this.options.sizeRatios[0]}),
             new DatePicker.Component.Minute({sizeRatio: this.options.sizeRatios[1]}),
             new DatePicker.Component.Second({sizeRatio: this.options.sizeRatios[2]})
-            //new DatePicker.Component.Millisecond()
         ]);
         this.add(this.datePicker);
 
         // Update click every second
+        var lastSecond = (new Date()).getSeconds();
+        var newSecond;
         Timer.every(function() {
-            this.datePicker.setDate(new Date());
-        }.bind(this), 60);
+            newSecond = (new Date()).getSeconds();
+            if (newSecond !== lastSecond) {
+                lastSecond = newSecond;
+                this.datePicker.setDate(new Date());
+            }
+        }.bind(this), 1);
     }
 
     function _createBack() {
