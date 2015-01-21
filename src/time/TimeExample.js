@@ -45,20 +45,20 @@ define(function(require, exports, module) {
             },
             container: {
                 classes: ['timepicker']
-            },
-            components: [
-                new DatePicker.Component.Hour(),
-                new DatePicker.Component.Minute(),
-                new DatePicker.Component.Second()
-            ],
-            overlay: {
-                top: new Surface({
-                    classes: ['timepicker-overlay-top']
-                }),
-                bottom: new Surface({
-                    classes: ['timepicker-overlay-bottom']
-                })
             }
+        });
+        this.datePicker.setComponents([
+            new DatePicker.Component.Hour(),
+            new DatePicker.Component.Minute(),
+            new DatePicker.Component.Second()
+        ]);
+        this.datePicker.setOverlay({
+            top: new Surface({
+                classes: ['timepicker-overlay-top']
+            }),
+            bottom: new Surface({
+                classes: ['timepicker-overlay-bottom']
+            })
         });
         this.add(this.datePicker);
         return this.datePicker;

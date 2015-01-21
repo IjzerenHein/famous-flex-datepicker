@@ -22,6 +22,8 @@ define(function(require, exports, module) {
     var Timer = require('famous/utilities/Timer');
     var LayoutController = require('famous-flex/LayoutController');
     var ProportionalLayout = require('famous-flex/layouts/ProportionalLayout');
+    var Modifier = require('famous/core/Modifier');
+    var Transform = require('famous/core/Transform');
 
     function ClockExample(options) {
         View.apply(this, arguments);
@@ -29,7 +31,6 @@ define(function(require, exports, module) {
         _createDatePicker.call(this);
         _createBack.call(this);
         _createSeparators.call(this);
-        _createLayout.call(this);
     }
     ClockExample.prototype = Object.create(View.prototype);
     ClockExample.prototype.constructor = ClockExample;
@@ -46,23 +47,24 @@ define(function(require, exports, module) {
                 diameter: 200,
                 radialOpacity: -1
             },
-            scrollView: {
+            scrollController: {
                 enabled: false
             },
             container: {
                 classes: ['clock']
-            },
-            components: [
-                new DatePicker.Component.Hour({sizeRatio: this.options.sizeRatios[0]}),
-                new DatePicker.Component.Minute({sizeRatio: this.options.sizeRatios[1]}),
-                new DatePicker.Component.Second({sizeRatio: this.options.sizeRatios[2]})
-                //new DatePicker.Component.Millisecond()
-            ]
+            }
         });
+        this.datePicker.setComponents([
+            new DatePicker.Component.Hour({sizeRatio: this.options.sizeRatios[0]}),
+            new DatePicker.Component.Minute({sizeRatio: this.options.sizeRatios[1]}),
+            new DatePicker.Component.Second({sizeRatio: this.options.sizeRatios[2]})
+            //new DatePicker.Component.Millisecond()
+        ]);
+        this.add(this.datePicker);
 
         // Update click every second
         Timer.every(function() {
-            this.dateWheel.setDate(new Date());
+            this.datePicker.setDate(new Date());
         }.bind(this), 60);
     }
 
@@ -70,6 +72,10 @@ define(function(require, exports, module) {
 		this.back = new Surface({
 			classes: ['clock-back']
 		});
+        var mod = new Modifier({
+            transform: Transform.translate(0, 0, -1000)
+        });
+        this.add(mod).add(this.back);
     }
 
     function _createSeparators() {
@@ -94,20 +100,6 @@ define(function(require, exports, module) {
 			]
 		});
 		this.add(separators);
-    }
-
-    function _createLayout() {
-		this.layout = new LayoutController({
-			layout: {dock: [
-				['fill', 'back', -1000],
-				['fill', 'content']
-			]},
-			dataSource: {
-				back: this.back,
-				content: this.datePicker
-			}
-		});
-		this.add(this.layout);
     }
 
     module.exports = ClockExample;

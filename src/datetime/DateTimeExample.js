@@ -46,26 +46,26 @@ define(function(require, exports, module) {
             },
             container: {
                 classes: ['datetimepicker']
-            },
-            components: [
-                new DatePicker.Component.FullDay({
-                    format: function(date) {
-                        // format full date in current locale using momentjs
-                        return moment(date).format('dd DD MMM');
-                    },
-                    sizeRatio: 2
-                }),
-                new DatePicker.Component.Hour(),
-                new DatePicker.Component.Minute()
-            ],
-            overlay: {
-                top: new Surface({
-                    classes: ['datetimepicker-overlay-top']
-                }),
-                bottom: new Surface({
-                    classes: ['datetimepicker-overlay-bottom']
-                })
             }
+        });
+        this.datePicker.setComponents([
+            new DatePicker.Component.FullDay({
+                format: function(date) {
+                    // format full date in current locale using momentjs
+                    return moment(date).format('dd DD MMM');
+                },
+                sizeRatio: 2
+            }),
+            new DatePicker.Component.Hour(),
+            new DatePicker.Component.Minute()
+        ]);
+        this.datePicker.setOverlay({
+            top: new Surface({
+                classes: ['datetimepicker-overlay-top']
+            }),
+            bottom: new Surface({
+                classes: ['datetimepicker-overlay-bottom']
+            })
         });
         this.add(this.datePicker);
         return this.datePicker;
