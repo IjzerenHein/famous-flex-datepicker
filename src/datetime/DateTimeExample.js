@@ -31,16 +31,12 @@ define(function(require, exports, module) {
     DateTimeExample.prototype = Object.create(View.prototype);
     DateTimeExample.prototype.constructor = DateTimeExample;
 
-    DateTimeExample.DEFAULT_OPTIONS = {
-		itemHeight: 50
-    };
-
     function _createDatePicker() {
-		this.datePicker = new DatePicker({
+        this.datePicker = new DatePicker({
             date: new Date(),
             perspective: 500,
             wheelLayout: {
-                itemSize: this.options.itemHeight,
+                itemSize: 50,
                 diameter: 320,
                 radialOpacity: -0.2
             },
@@ -72,9 +68,9 @@ define(function(require, exports, module) {
     }
 
     function _createBack() {
-		this.back = new Surface({
-			classes: ['datetimepicker-back']
-		});
+        this.back = new Surface({
+            classes: ['datetimepicker-back']
+        });
         var mod = new Modifier({
             transform: Transform.translate(0, 0, -1000)
         });

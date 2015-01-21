@@ -1,7 +1,7 @@
 famous-flex-datepicker
 ==========
 
-DatePicker demo for famo.us using the [famous-flex](https://github.com/IjzerenHein/famous-flex) DatePicker. This project shows how to create a native feeling cross-platform date-picker using famo.us.
+Date/time picker demo for famo.us using the [famous-flex](https://github.com/IjzerenHein/famous-flex) DatePicker. This project shows how to create a native feeling cross-platform date-picker using famo.us.
 
 ![Screenshot](screenshot.gif)
 

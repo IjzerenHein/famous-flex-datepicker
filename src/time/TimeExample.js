@@ -24,22 +24,18 @@ define(function(require, exports, module) {
     function TimeExample(options) {
         View.apply(this, arguments);
 
-        _createDateWheel.call(this);
+        _createDatePicker.call(this);
         _createBack.call(this);
     }
     TimeExample.prototype = Object.create(View.prototype);
     TimeExample.prototype.constructor = TimeExample;
 
-    TimeExample.DEFAULT_OPTIONS = {
-		itemHeight: 80
-    };
-
-    function _createDateWheel() {
-		this.datePicker = new DatePicker({
+    function _createDatePicker() {
+        this.datePicker = new DatePicker({
             perspective: 500,
             date: new Date(),
             wheelLayout: {
-                itemSize: this.options.itemHeight,
+                itemSize: 80,
                 diameter: 320,
                 radialOpacity: 0
             },
