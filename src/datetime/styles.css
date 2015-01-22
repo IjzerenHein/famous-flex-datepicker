@@ -16,7 +16,7 @@
   border-top: 1px solid #777777;
 }
 
-.datetimepicker .item > div {
+.datetimepicker .item {
   text-align: center;
   font-size: 32px;
   font-weight: 100;

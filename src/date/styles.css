@@ -16,7 +16,7 @@
   border-top: 1px solid #777777;
 }
 
-.datepicker .item > div {
+.datepicker .item {
   -color: white;
   text-align: center;
   font-size: 36px;

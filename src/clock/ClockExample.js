@@ -86,11 +86,11 @@ define(function(require, exports, module) {
     function _createSeparators() {
         var separator1 = new Surface({
             classes: ['clock-separator', 'clock-separator-1'],
-            content: '<div>:</div>'
+            content: ':'
         });
         var separator2 = new Surface({
             classes: ['clock-separator', 'clock-separator-2'],
-            content: '<div>:</div>'
+            content: ':'
         });
         var separators = new LayoutController({
             layout: ProportionalLayout,
@@ -104,7 +104,9 @@ define(function(require, exports, module) {
                 separator2
             ]
         });
-        this.add(separators);
+        this.datePicker.setOverlay({
+            middle: separators
+        });
     }
 
     module.exports = ClockExample;
