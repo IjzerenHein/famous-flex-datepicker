@@ -101,7 +101,7 @@
 	    _addExample(new DateTimeExample(), 'Date + Time example');
 	    _addExample(new DateExample(), 'Date example');
 	    _addExample(new TimeExample(), 'Time example');
-	    //_addExample(new ClockExample(), 'Clock example');
+	    _addExample(new ClockExample(), 'Clock example');
 	    scrollView.setDataSource(dateWheels);
 
 	    //
@@ -208,16 +208,16 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 
 	    // import dependencies
-	    __webpack_require__(29);
+	    __webpack_require__(27);
 	    var View = __webpack_require__(21);
 	    var Surface = __webpack_require__(20);
-	    var RenderNode = __webpack_require__(24);
+	    var RenderNode = __webpack_require__(22);
 	    var DatePicker = __webpack_require__(15);
 	    var Timer = __webpack_require__(25);
 	    var LayoutController = __webpack_require__(13);
 	    var ProportionalLayout = __webpack_require__(16);
-	    var Modifier = __webpack_require__(22);
-	    var Transform = __webpack_require__(23);
+	    var Modifier = __webpack_require__(23);
+	    var Transform = __webpack_require__(24);
 
 	    function ClockExample(options) {
 	        View.apply(this, arguments);
@@ -230,11 +230,11 @@
 	    ClockExample.prototype.constructor = ClockExample;
 
 	    ClockExample.DEFAULT_OPTIONS = {
-			sizeRatios: [1.3, 1, 1.3]
+	        sizeRatios: [1.3, 1, 1.3]
 	    };
 
 	    function _createDatePicker() {
-			this.datePicker = new DatePicker({
+	        this.datePicker = new DatePicker({
 	            date: new Date(),
 	            wheelLayout: {
 	                itemSize: 80,
@@ -252,20 +252,25 @@
 	            new DatePicker.Component.Hour({sizeRatio: this.options.sizeRatios[0]}),
 	            new DatePicker.Component.Minute({sizeRatio: this.options.sizeRatios[1]}),
 	            new DatePicker.Component.Second({sizeRatio: this.options.sizeRatios[2]})
-	            //new DatePicker.Component.Millisecond()
 	        ]);
 	        this.add(this.datePicker);
 
 	        // Update click every second
+	        var lastSecond = (new Date()).getSeconds();
+	        var newSecond;
 	        Timer.every(function() {
-	            this.datePicker.setDate(new Date());
-	        }.bind(this), 60);
+	            newSecond = (new Date()).getSeconds();
+	            if (newSecond !== lastSecond) {
+	                lastSecond = newSecond;
+	                this.datePicker.setDate(new Date());
+	            }
+	        }.bind(this), 1);
 	    }
 
 	    function _createBack() {
-			this.back = new Surface({
-				classes: ['clock-back']
-			});
+	        this.back = new Surface({
+	            classes: ['clock-back']
+	        });
 	        var mod = new Modifier({
 	            transform: Transform.translate(0, 0, -1000)
 	        });
@@ -273,27 +278,29 @@
 	    }
 
 	    function _createSeparators() {
-			var separator1 = new Surface({
-				classes: ['clock-separator', 'clock-separator-1'],
-				content: '<div>:</div>'
-			});
-			var separator2 = new Surface({
-				classes: ['clock-separator', 'clock-separator-2'],
-				content: '<div>:</div>'
-			});
-			var separators = new LayoutController({
-				layout: ProportionalLayout,
-				layoutOptions: {
-					ratios: this.options.sizeRatios
-				},
-				direction: 0,
-				dataSource: [
-					separator1,
-					new RenderNode(),
-					separator2
-				]
-			});
-			this.add(separators);
+	        var separator1 = new Surface({
+	            classes: ['clock-separator', 'clock-separator-1'],
+	            content: ':'
+	        });
+	        var separator2 = new Surface({
+	            classes: ['clock-separator', 'clock-separator-2'],
+	            content: ':'
+	        });
+	        var separators = new LayoutController({
+	            layout: ProportionalLayout,
+	            layoutOptions: {
+	                ratios: this.options.sizeRatios
+	            },
+	            direction: 0,
+	            dataSource: [
+	                separator1,
+	                new RenderNode(),
+	                separator2
+	            ]
+	        });
+	        this.datePicker.setOverlay({
+	            middle: separators
+	        });
 	    }
 
 	    module.exports = ClockExample;
@@ -320,12 +327,12 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 
 	    // import dependencies
-	    __webpack_require__(31);
+	    __webpack_require__(29);
 	    var moment = __webpack_require__(38);
 	    var View = __webpack_require__(21);
 	    var Surface = __webpack_require__(20);
-	    var Modifier = __webpack_require__(22);
-	    var Transform = __webpack_require__(23);
+	    var Modifier = __webpack_require__(23);
+	    var Transform = __webpack_require__(24);
 	    var DatePicker = __webpack_require__(15);
 
 	    function DateExample(options) {
@@ -337,16 +344,12 @@
 	    DateExample.prototype = Object.create(View.prototype);
 	    DateExample.prototype.constructor = DateExample;
 
-	    DateExample.DEFAULT_OPTIONS = {
-			itemHeight: 60
-	    };
-
 	    function _createDatePicker() {
-			this.datePicker = new DatePicker({
+	        this.datePicker = new DatePicker({
 	            date: new Date(),
 	            perspective: 500,
 	            wheelLayout: {
-	                itemSize: this.options.itemHeight,
+	                itemSize: 60,
 	                diameter: 320,
 	                radialOpacity: -0.5
 	            },
@@ -380,9 +383,9 @@
 	    }
 
 	    function _createBack() {
-			this.back = new Surface({
-				classes: ['datepicker-back']
-			});
+	        this.back = new Surface({
+	            classes: ['datepicker-back']
+	        });
 	        var mod = new Modifier({
 	            transform: Transform.translate(0, 0, -1000)
 	        });
@@ -413,32 +416,28 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 
 	    // import dependencies
-	    __webpack_require__(33);
+	    __webpack_require__(31);
 	    var View = __webpack_require__(21);
 	    var Surface = __webpack_require__(20);
-	    var Modifier = __webpack_require__(22);
-	    var Transform = __webpack_require__(23);
+	    var Modifier = __webpack_require__(23);
+	    var Transform = __webpack_require__(24);
 	    var DatePicker = __webpack_require__(15);
 
 	    function TimeExample(options) {
 	        View.apply(this, arguments);
 
-	        _createDateWheel.call(this);
+	        _createDatePicker.call(this);
 	        _createBack.call(this);
 	    }
 	    TimeExample.prototype = Object.create(View.prototype);
 	    TimeExample.prototype.constructor = TimeExample;
 
-	    TimeExample.DEFAULT_OPTIONS = {
-			itemHeight: 80
-	    };
-
-	    function _createDateWheel() {
-			this.datePicker = new DatePicker({
+	    function _createDatePicker() {
+	        this.datePicker = new DatePicker({
 	            perspective: 500,
 	            date: new Date(),
 	            wheelLayout: {
-	                itemSize: this.options.itemHeight,
+	                itemSize: 80,
 	                diameter: 320,
 	                radialOpacity: 0
 	            },
@@ -497,12 +496,12 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 
 	    // import dependencies
-	    __webpack_require__(27);
+	    __webpack_require__(33);
 	    var moment = __webpack_require__(38);
 	    var View = __webpack_require__(21);
 	    var Surface = __webpack_require__(20);
-	    var Modifier = __webpack_require__(22);
-	    var Transform = __webpack_require__(23);
+	    var Modifier = __webpack_require__(23);
+	    var Transform = __webpack_require__(24);
 	    var DatePicker = __webpack_require__(15);
 
 	    function DateTimeExample(options) {
@@ -514,16 +513,12 @@
 	    DateTimeExample.prototype = Object.create(View.prototype);
 	    DateTimeExample.prototype.constructor = DateTimeExample;
 
-	    DateTimeExample.DEFAULT_OPTIONS = {
-			itemHeight: 50
-	    };
-
 	    function _createDatePicker() {
-			this.datePicker = new DatePicker({
+	        this.datePicker = new DatePicker({
 	            date: new Date(),
 	            perspective: 500,
 	            wheelLayout: {
-	                itemSize: this.options.itemHeight,
+	                itemSize: 50,
 	                diameter: 320,
 	                radialOpacity: -0.2
 	            },
@@ -555,9 +550,9 @@
 	    }
 
 	    function _createBack() {
-			this.back = new Surface({
-				classes: ['datetimepicker-back']
-			});
+	        this.back = new Surface({
+	            classes: ['datetimepicker-back']
+	        });
 	        var mod = new Modifier({
 	            transform: Transform.translate(0, 0, -1000)
 	        });
@@ -1465,7 +1460,7 @@
 	    var LayoutNodeManager = __webpack_require__(47);
 	    var LayoutNode = __webpack_require__(48);
 	    var FlowLayoutNode = __webpack_require__(49);
-	    var Transform = __webpack_require__(23);
+	    var Transform = __webpack_require__(24);
 	    __webpack_require__(50);
 
 	    /**
@@ -1593,8 +1588,10 @@
 	        if (options.dataSource) {
 	            this.setDataSource(options.dataSource);
 	        }
-	        if (options.layout || options.layoutOptions) {
+	        if (options.layout) {
 	            this.setLayout(options.layout, options.layoutOptions);
+	        } else if (options.layoutOptions) {
+	            this.setLayoutOptions(options.layoutOptions);
 	        }
 	        if (options.direction !== undefined) {
 	            this.setDirection(options.direction);
@@ -2355,7 +2352,7 @@
 	 * CSS:
 	 *
 	 * ```css
-	 * .famous-flex-datepicker .item > div {
+	 * .famous-flex-datepicker .item {
 	 *   text-align: center;
 	 *   font-size: 40px;
 	 *   line-height: 60px; // this should equal the WheelLayout itemSize
@@ -2928,7 +2925,7 @@
 	     * @static
 	     * @class Engine
 	     */
-	    var Context = __webpack_require__(56);
+	    var Context = __webpack_require__(55);
 	    var EventHandler = __webpack_require__(46);
 	    var OptionsManager = __webpack_require__(45);
 
@@ -3327,7 +3324,7 @@
 	 */
 
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	    var ElementOutput = __webpack_require__(55);
+	    var ElementOutput = __webpack_require__(56);
 
 	    /**
 	     * A base class for viewable content and event
@@ -3831,7 +3828,7 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 	    var EventHandler = __webpack_require__(46);
 	    var OptionsManager = __webpack_require__(45);
-	    var RenderNode = __webpack_require__(24);
+	    var RenderNode = __webpack_require__(22);
 	    var Utility = __webpack_require__(42);
 
 	    /**
@@ -3945,7 +3942,180 @@
 	 */
 
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	    var Transform = __webpack_require__(23);
+	    var Entity = __webpack_require__(43);
+	    var SpecParser = __webpack_require__(57);
+
+	    /**
+	     * A wrapper for inserting a renderable component (like a Modifer or
+	     *   Surface) into the render tree.
+	     *
+	     * @class RenderNode
+	     * @constructor
+	     *
+	     * @param {Object} object Target renderable component
+	     */
+	    function RenderNode(object) {
+	        this._object = null;
+	        this._child = null;
+	        this._hasMultipleChildren = false;
+	        this._isRenderable = false;
+	        this._isModifier = false;
+
+	        this._resultCache = {};
+	        this._prevResults = {};
+
+	        this._childResult = null;
+
+	        if (object) this.set(object);
+	    }
+
+	    /**
+	     * Append a renderable to the list of this node's children.
+	     *   This produces a new RenderNode in the tree.
+	     *   Note: Does not double-wrap if child is a RenderNode already.
+	     *
+	     * @method add
+	     * @param {Object} child renderable object
+	     * @return {RenderNode} new render node wrapping child
+	     */
+	    RenderNode.prototype.add = function add(child) {
+	        var childNode = (child instanceof RenderNode) ? child : new RenderNode(child);
+	        if (this._child instanceof Array) this._child.push(childNode);
+	        else if (this._child) {
+	            this._child = [this._child, childNode];
+	            this._hasMultipleChildren = true;
+	            this._childResult = []; // to be used later
+	        }
+	        else this._child = childNode;
+
+	        return childNode;
+	    };
+
+	    /**
+	     * Return the single wrapped object.  Returns null if this node has multiple child nodes.
+	     *
+	     * @method get
+	     *
+	     * @return {Ojbect} contained renderable object
+	     */
+	    RenderNode.prototype.get = function get() {
+	        return this._object || (this._hasMultipleChildren ? null : (this._child ? this._child.get() : null));
+	    };
+
+	    /**
+	     * Overwrite the list of children to contain the single provided object
+	     *
+	     * @method set
+	     * @param {Object} child renderable object
+	     * @return {RenderNode} this render node, or child if it is a RenderNode
+	     */
+	    RenderNode.prototype.set = function set(child) {
+	        this._childResult = null;
+	        this._hasMultipleChildren = false;
+	        this._isRenderable = child.render ? true : false;
+	        this._isModifier = child.modify ? true : false;
+	        this._object = child;
+	        this._child = null;
+	        if (child instanceof RenderNode) return child;
+	        else return this;
+	    };
+
+	    /**
+	     * Get render size of contained object.
+	     *
+	     * @method getSize
+	     * @return {Array.Number} size of this or size of single child.
+	     */
+	    RenderNode.prototype.getSize = function getSize() {
+	        var result = null;
+	        var target = this.get();
+	        if (target && target.getSize) result = target.getSize();
+	        if (!result && this._child && this._child.getSize) result = this._child.getSize();
+	        return result;
+	    };
+
+	    // apply results of rendering this subtree to the document
+	    function _applyCommit(spec, context, cacheStorage) {
+	        var result = SpecParser.parse(spec, context);
+	        var keys = Object.keys(result);
+	        for (var i = 0; i < keys.length; i++) {
+	            var id = keys[i];
+	            var childNode = Entity.get(id);
+	            var commitParams = result[id];
+	            commitParams.allocator = context.allocator;
+	            var commitResult = childNode.commit(commitParams);
+	            if (commitResult) _applyCommit(commitResult, context, cacheStorage);
+	            else cacheStorage[id] = commitParams;
+	        }
+	    }
+
+	    /**
+	     * Commit the content change from this node to the document.
+	     *
+	     * @private
+	     * @method commit
+	     * @param {Context} context render context
+	     */
+	    RenderNode.prototype.commit = function commit(context) {
+	        // free up some divs from the last loop
+	        var prevKeys = Object.keys(this._prevResults);
+	        for (var i = 0; i < prevKeys.length; i++) {
+	            var id = prevKeys[i];
+	            if (this._resultCache[id] === undefined) {
+	                var object = Entity.get(id);
+	                if (object.cleanup) object.cleanup(context.allocator);
+	            }
+	        }
+
+	        this._prevResults = this._resultCache;
+	        this._resultCache = {};
+	        _applyCommit(this.render(), context, this._resultCache);
+	    };
+
+	    /**
+	     * Generate a render spec from the contents of the wrapped component.
+	     *
+	     * @private
+	     * @method render
+	     *
+	     * @return {Object} render specification for the component subtree
+	     *    only under this node.
+	     */
+	    RenderNode.prototype.render = function render() {
+	        if (this._isRenderable) return this._object.render();
+
+	        var result = null;
+	        if (this._hasMultipleChildren) {
+	            result = this._childResult;
+	            var children = this._child;
+	            for (var i = 0; i < children.length; i++) {
+	                result[i] = children[i].render();
+	            }
+	        }
+	        else if (this._child) result = this._child.render();
+
+	        return this._isModifier ? this._object.modify(result) : result;
+	    };
+
+	    module.exports = RenderNode;
+	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;/* This Source Code Form is subject to the terms of the Mozilla Public
+	 * License, v. 2.0. If a copy of the MPL was not distributed with this
+	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+	 *
+	 * Owner: mark@famo.us
+	 * @license MPL 2.0
+	 * @copyright Famous Industries, Inc. 2014
+	 */
+
+	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
+	    var Transform = __webpack_require__(24);
 
 	    /* TODO: remove these dependencies when deprecation complete */
 	    var Transitionable = __webpack_require__(58);
@@ -4372,7 +4542,7 @@
 
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* This Source Code Form is subject to the terms of the Mozilla Public
@@ -5060,179 +5230,6 @@
 
 
 /***/ },
-/* 24 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_RESULT__;/* This Source Code Form is subject to the terms of the Mozilla Public
-	 * License, v. 2.0. If a copy of the MPL was not distributed with this
-	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
-	 *
-	 * Owner: mark@famo.us
-	 * @license MPL 2.0
-	 * @copyright Famous Industries, Inc. 2014
-	 */
-
-	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	    var Entity = __webpack_require__(43);
-	    var SpecParser = __webpack_require__(57);
-
-	    /**
-	     * A wrapper for inserting a renderable component (like a Modifer or
-	     *   Surface) into the render tree.
-	     *
-	     * @class RenderNode
-	     * @constructor
-	     *
-	     * @param {Object} object Target renderable component
-	     */
-	    function RenderNode(object) {
-	        this._object = null;
-	        this._child = null;
-	        this._hasMultipleChildren = false;
-	        this._isRenderable = false;
-	        this._isModifier = false;
-
-	        this._resultCache = {};
-	        this._prevResults = {};
-
-	        this._childResult = null;
-
-	        if (object) this.set(object);
-	    }
-
-	    /**
-	     * Append a renderable to the list of this node's children.
-	     *   This produces a new RenderNode in the tree.
-	     *   Note: Does not double-wrap if child is a RenderNode already.
-	     *
-	     * @method add
-	     * @param {Object} child renderable object
-	     * @return {RenderNode} new render node wrapping child
-	     */
-	    RenderNode.prototype.add = function add(child) {
-	        var childNode = (child instanceof RenderNode) ? child : new RenderNode(child);
-	        if (this._child instanceof Array) this._child.push(childNode);
-	        else if (this._child) {
-	            this._child = [this._child, childNode];
-	            this._hasMultipleChildren = true;
-	            this._childResult = []; // to be used later
-	        }
-	        else this._child = childNode;
-
-	        return childNode;
-	    };
-
-	    /**
-	     * Return the single wrapped object.  Returns null if this node has multiple child nodes.
-	     *
-	     * @method get
-	     *
-	     * @return {Ojbect} contained renderable object
-	     */
-	    RenderNode.prototype.get = function get() {
-	        return this._object || (this._hasMultipleChildren ? null : (this._child ? this._child.get() : null));
-	    };
-
-	    /**
-	     * Overwrite the list of children to contain the single provided object
-	     *
-	     * @method set
-	     * @param {Object} child renderable object
-	     * @return {RenderNode} this render node, or child if it is a RenderNode
-	     */
-	    RenderNode.prototype.set = function set(child) {
-	        this._childResult = null;
-	        this._hasMultipleChildren = false;
-	        this._isRenderable = child.render ? true : false;
-	        this._isModifier = child.modify ? true : false;
-	        this._object = child;
-	        this._child = null;
-	        if (child instanceof RenderNode) return child;
-	        else return this;
-	    };
-
-	    /**
-	     * Get render size of contained object.
-	     *
-	     * @method getSize
-	     * @return {Array.Number} size of this or size of single child.
-	     */
-	    RenderNode.prototype.getSize = function getSize() {
-	        var result = null;
-	        var target = this.get();
-	        if (target && target.getSize) result = target.getSize();
-	        if (!result && this._child && this._child.getSize) result = this._child.getSize();
-	        return result;
-	    };
-
-	    // apply results of rendering this subtree to the document
-	    function _applyCommit(spec, context, cacheStorage) {
-	        var result = SpecParser.parse(spec, context);
-	        var keys = Object.keys(result);
-	        for (var i = 0; i < keys.length; i++) {
-	            var id = keys[i];
-	            var childNode = Entity.get(id);
-	            var commitParams = result[id];
-	            commitParams.allocator = context.allocator;
-	            var commitResult = childNode.commit(commitParams);
-	            if (commitResult) _applyCommit(commitResult, context, cacheStorage);
-	            else cacheStorage[id] = commitParams;
-	        }
-	    }
-
-	    /**
-	     * Commit the content change from this node to the document.
-	     *
-	     * @private
-	     * @method commit
-	     * @param {Context} context render context
-	     */
-	    RenderNode.prototype.commit = function commit(context) {
-	        // free up some divs from the last loop
-	        var prevKeys = Object.keys(this._prevResults);
-	        for (var i = 0; i < prevKeys.length; i++) {
-	            var id = prevKeys[i];
-	            if (this._resultCache[id] === undefined) {
-	                var object = Entity.get(id);
-	                if (object.cleanup) object.cleanup(context.allocator);
-	            }
-	        }
-
-	        this._prevResults = this._resultCache;
-	        this._resultCache = {};
-	        _applyCommit(this.render(), context, this._resultCache);
-	    };
-
-	    /**
-	     * Generate a render spec from the contents of the wrapped component.
-	     *
-	     * @private
-	     * @method render
-	     *
-	     * @return {Object} render specification for the component subtree
-	     *    only under this node.
-	     */
-	    RenderNode.prototype.render = function render() {
-	        if (this._isRenderable) return this._object.render();
-
-	        var result = null;
-	        if (this._hasMultipleChildren) {
-	            result = this._childResult;
-	            var children = this._child;
-	            for (var i = 0; i < children.length; i++) {
-	                result[i] = children[i].render();
-	            }
-	        }
-	        else if (this._child) result = this._child.render();
-
-	        return this._isModifier ? this._object.modify(result) : result;
-	    };
-
-	    module.exports = RenderNode;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ },
 /* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -5487,7 +5484,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports =
-		"\n.datetimepicker-back {\n  background-color: #FFFCFC;\n}\n\n.datetimepicker-overlay-top, .datetimepicker-overlay-bottom {\n  background-color: rgba(255, 255, 255, 0.6);\n  pointer-events: none;\n}\n\n.datetimepicker-overlay-top {\n  border-bottom: 1px solid #777777;\n}\n\n.datetimepicker-overlay-bottom {\n  border-top: 1px solid #777777;\n}\n\n.datetimepicker .item > div {\n  text-align: center;\n  font-size: 32px;\n  font-weight: 100;\n  line-height: 50px;\n}";
+		"\n.clock-back {\n  background-color: black;\n}\n\n.clock .item, .clock-separator {\n  color: white;\n  text-align: center;\n  font-size: 70px;\n  line-height: 80px;\n}\n\n.clock-separator-1 {\n\ttext-align: right;\n}\n\n.clock-separator-2 {\n\ttext-align: left;\n}";
 
 /***/ },
 /* 29 */
@@ -5508,7 +5505,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports =
-		"\n.clock-back {\n  background-color: black;\n}\n\n.clock .item > div, .clock-separator > div {\n  color: white;\n  text-align: center;\n  font-size: 70px;\n  /* center text vertically */\n  position: relative;\n  top: 50%;\n  transform: translateY(-50%);\n}\n\n.clock-separator-1 > div {\n\ttext-align: right;\n}\n\n.clock-separator-2 > div {\n\ttext-align: left;\n}";
+		"\n.datepicker-back {\n  background-color: #FFFCFC;\n}\n\n.datepicker-overlay-top, .datepicker-overlay-bottom {\n  background-color: rgba(255, 255, 255, 0.6);\n  pointer-events: none;\n}\n\n.datepicker-overlay-top {\n  border-bottom: 1px solid #777777;\n}\n\n.datepicker-overlay-bottom {\n  border-top: 1px solid #777777;\n}\n\n.datepicker .item {\n  -color: white;\n  text-align: center;\n  font-size: 36px;\n  line-height: 60px;\n  font-weight: 100;\n}";
 
 /***/ },
 /* 31 */
@@ -5529,7 +5526,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports =
-		"\n.datepicker-back {\n  background-color: #FFFCFC;\n}\n\n.datepicker-overlay-top, .datepicker-overlay-bottom {\n  background-color: rgba(255, 255, 255, 0.6);\n  pointer-events: none;\n}\n\n.datepicker-overlay-top {\n  border-bottom: 1px solid #777777;\n}\n\n.datepicker-overlay-bottom {\n  border-top: 1px solid #777777;\n}\n\n.datepicker .item > div {\n  -color: white;\n  text-align: center;\n  font-size: 36px;\n  line-height: 60px;\n  font-weight: 100;\n}";
+		"\n.timepicker-back {\n  background-color: #FFFCFC;\n}\n\n.timepicker-overlay-top, .timepicker-overlay-bottom {\n  background-color: rgba(255, 255, 255, 0.6);\n  pointer-events: none;\n}\n\n.timepicker-overlay-top {\n  border-bottom: 1px solid #777777;\n}\n\n.timepicker-overlay-bottom {\n  border-top: 1px solid #777777;\n}\n\n.timepicker .item {\n  color: black;\n  text-align: center;\n  font-size: 60px;\n  font-weight: normal;\n  line-height: 80px;\n}\n";
 
 /***/ },
 /* 33 */
@@ -5550,7 +5547,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports =
-		"\n.timepicker-back {\n  background-color: #FFFCFC;\n}\n\n.timepicker-overlay-top, .timepicker-overlay-bottom {\n  background-color: rgba(255, 255, 255, 0.6);\n  pointer-events: none;\n}\n\n.timepicker-overlay-top {\n  border-bottom: 1px solid #777777;\n}\n\n.timepicker-overlay-bottom {\n  border-top: 1px solid #777777;\n}\n\n.timepicker .item > div {\n  color: black;\n  text-align: center;\n  font-size: 60px;\n  font-weight: normal;\n  line-height: 80px;\n}\n";
+		"\n.datetimepicker-back {\n  background-color: #FFFCFC;\n}\n\n.datetimepicker-overlay-top, .datetimepicker-overlay-bottom {\n  background-color: rgba(255, 255, 255, 0.6);\n  pointer-events: none;\n}\n\n.datetimepicker-overlay-top {\n  border-bottom: 1px solid #777777;\n}\n\n.datetimepicker-overlay-bottom {\n  border-top: 1px solid #777777;\n}\n\n.datetimepicker .item {\n  text-align: center;\n  font-size: 32px;\n  font-weight: 100;\n  line-height: 50px;\n}";
 
 /***/ },
 /* 35 */
@@ -8792,7 +8789,7 @@
 	    }
 	}).call(this);
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(73)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(153)(module)))
 
 /***/ },
 /* 39 */
@@ -9134,7 +9131,7 @@
 	    var FlowLayoutNode = __webpack_require__(49);
 	    var LayoutNodeManager = __webpack_require__(47);
 	    var ContainerSurface = __webpack_require__(51);
-	    var Transform = __webpack_require__(23);
+	    var Transform = __webpack_require__(24);
 	    var EventHandler = __webpack_require__(46);
 	    var Group = __webpack_require__(61);
 	    var Vector = __webpack_require__(62);
@@ -9329,6 +9326,7 @@
 	        paginationEnergyThresshold: 0.01,
 	        alignment: 0,         // [0: top/left, 1: bottom/right]
 	        touchMoveDirectionThresshold: undefined, // 0..1
+	        touchMoveNoVelocityDuration: 100,
 	        mouseMove: false,
 	        enabled: true,          // set to false to disable scrolling
 	        layoutAll: false,       // set to true is you want all renderables layed out/rendered
@@ -9498,7 +9496,7 @@
 	        // Calculate delta and velocity
 	        var velocity = 0;
 	        var diffTime = this._scroll.mouseMove.time - this._scroll.mouseMove.prevTime;
-	        if (diffTime > 0) {
+	        if ((diffTime > 0) && ((Date.now() - this._scroll.mouseMove.time) <= this.options.touchMoveNoVelocityDuration)) {
 	            var diffOffset = this._scroll.mouseMove.current[this._direction] - this._scroll.mouseMove.prev[this._direction];
 	            velocity = diffOffset / diffTime;
 	        }
@@ -9669,7 +9667,7 @@
 	        // Determine velocity and add to particle
 	        var velocity = 0;
 	        var diffTime = primaryTouch.time - primaryTouch.prevTime;
-	        if (diffTime > 0) {
+	        if ((diffTime > 0) && ((Date.now() - primaryTouch.time) <= this.options.touchMoveNoVelocityDuration)) {
 	            var diffOffset = primaryTouch.current[this._direction] - primaryTouch.prev[this._direction];
 	            velocity = diffOffset / diffTime;
 	        }
@@ -9980,7 +9978,7 @@
 	        if (this._viewSequence.cleanup) {
 	            var viewSequence = this._viewSequence;
 	            while (viewSequence.get() !== scrollToRenderNode) {
-	                viewSequence = this._scroll.scrollToDirection ? viewSequence.getNext() : viewSequence.getPrevious();
+	                viewSequence = this._scroll.scrollToDirection ? viewSequence.getNext(true) : viewSequence.getPrevious(true);
 	                if (!viewSequence) {
 	                    break;
 	                }
@@ -10013,17 +10011,8 @@
 	                break;
 	            case PaginationMode.PAGE:
 	                item = this.options.alignment ? this.getLastVisibleItem() : this.getFirstVisibleItem();
-	                if (item) {
-	                    if (this.options.paginationEnergyThresshold && (Math.abs(this._scroll.particle.getEnergy()) >= this.options.paginationEnergyThresshold)) {
-	                        var velocity = this._scroll.particle.getVelocity1D();
-	                        if ((velocity < 0) && item._node._next && item._node._next.renderNode) {
-	                            this.goToRenderNode(item._node._next.renderNode);
-	                        } else if ((velocity >= 0) && item._node._prev && item._node._prev.renderNode) {
-	                            this.goToRenderNode(item._node._prev.renderNode);
-	                        }
-	                    } else if (item.renderNode) {
-	                        this.goToRenderNode(item.renderNode);
-	                    }
+	                if (item && item.renderNode) {
+	                    this.goToRenderNode(item.renderNode);
 	                }
 	                break;
 	        }
@@ -10648,6 +10637,9 @@
 	     */
 	    ScrollController.prototype.applyScrollForce = function(delta) {
 	        this.halt();
+	        if (this._scroll.scrollForceCount === 0) {
+	            this._scroll.scrollForceStartItem = this.alignment ? this.getLastVisibleItem() : this.getFirstVisibleItem();
+	        }
 	        this._scroll.scrollForceCount++;
 	        this._scroll.scrollForce += delta;
 	        return this;
@@ -10689,6 +10681,24 @@
 	            this._scroll.pe.wake();
 	            this._scroll.scrollForce = 0;
 	            this._scroll.scrollDirty = true;
+	            if (this._scroll.scrollForceStartItem && this.options.paginated && (this.options.paginationMode === PaginationMode.PAGE)) {
+	                var item = this.alignment ? this.getLastVisibleItem() : this.getFirstVisibleItem();
+	                if (item.renderNode !== this._scroll.scrollForceStartItem.renderNode) {
+	                    this.goToRenderNode(item.renderNode);
+	                }
+	                else if (this.options.paginationEnergyThresshold && (Math.abs(this._scroll.particle.getEnergy()) >= this.options.paginationEnergyThresshold)) {
+	                    velocity = velocity || 0;
+	                    if ((velocity < 0) && item._node._next && item._node._next.renderNode) {
+	                        this.goToRenderNode(item._node._next.renderNode);
+	                    } else if ((velocity >= 0) && item._node._prev && item._node._prev.renderNode) {
+	                        this.goToRenderNode(item._node._prev.renderNode);
+	                    }
+	                }
+	                else {
+	                    this.goToRenderNode(item.renderNode);
+	                }
+	            }
+	            this._scroll.scrollForceStartItem = undefined;
 	        }
 	        else {
 	            this._scroll.scrollForce -= delta;
@@ -13025,7 +13035,7 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 
 	    // import dependencies
-	    var Transform = __webpack_require__(23);
+	    var Transform = __webpack_require__(24);
 	    var LayoutUtility = __webpack_require__(39);
 
 	    /**
@@ -13227,7 +13237,7 @@
 
 	    // import dependencies
 	    var OptionsManager = __webpack_require__(45);
-	    var Transform = __webpack_require__(23);
+	    var Transform = __webpack_require__(24);
 	    var Vector = __webpack_require__(62);
 	    var Particle = __webpack_require__(64);
 	    var Spring = __webpack_require__(66);
@@ -13988,7 +13998,7 @@
 
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 	    var Surface = __webpack_require__(20);
-	    var Context = __webpack_require__(56);
+	    var Context = __webpack_require__(55);
 
 	    /**
 	     * ContainerSurface is an object designed to contain surfaces and
@@ -14365,10 +14375,13 @@
 	     *
 	     * @return {VirtualViewSequence} previous node.
 	     */
-	    VirtualViewSequence.prototype.getPrevious = function() {
+	    VirtualViewSequence.prototype.getPrevious = function(noCreate) {
 	        if (this.prev) {
 	            this.prev.touched = true;
 	            return this.prev;
+	        }
+	        if (noCreate) {
+	            return undefined;
 	        }
 	        var value = this._.factory.createPrevious(this.get());
 	        if (!value) {
@@ -14393,10 +14406,13 @@
 	     *
 	     * @return {VirtualViewSequence} next node.
 	     */
-	    VirtualViewSequence.prototype.getNext = function() {
+	    VirtualViewSequence.prototype.getNext = function(noCreate) {
 	        if (this.next) {
 	            this.next.touched = true;
 	            return this.next;
+	        }
+	        if (noCreate) {
+	            return undefined;
 	        }
 	        var value = this._.factory.createNext(this.get());
 	        if (!value) {
@@ -14580,6 +14596,7 @@
 	     */
 	    function Base(options) {
 	        this._eventOutput = new EventHandler();
+	        this._pool = [];
 	        EventHandler.setOutputHandler(this, this._eventOutput);
 	        if (options) {
 	            for (var key in options) {
@@ -14640,16 +14657,24 @@
 	    };
 	    Base.prototype.create = function(date) {
 	        date = date || new Date();
-	        var surface = new Surface({
-	            classes: this.classes,
-	            content: '<div>' + this.format(date) + '</div>'
-	        });
+	        var surface;
+	        if (this._pool.length) {
+	            surface = this._pool[0];
+	            this._pool.splice(0, 1);
+	        }
+	        else {
+	            surface = new Surface({
+	                classes: this.classes
+	            });
+	            this.installClickHandler(surface);
+	        }
+	        surface.setContent(this.format(date));
 	        surface.date = date;
-	        this.installClickHandler(surface);
 	        return surface;
 	    };
 	    Base.prototype.destroy = function(renderable) {
-	        // perform any cleanup here if neccesary
+	        // push the renderable into the pool for re-use
+	        this._pool.push(renderable);
 	    };
 
 	    /**
@@ -14852,9 +14877,248 @@
 	 */
 
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
+	    var RenderNode = __webpack_require__(22);
+	    var EventHandler = __webpack_require__(46);
+	    var ElementAllocator = __webpack_require__(70);
+	    var Transform = __webpack_require__(24);
+	    var Transitionable = __webpack_require__(58);
+
+	    var _zeroZero = [0, 0];
+	    var usePrefix = !('perspective' in document.documentElement.style);
+
+	    function _getElementSize(element) {
+	        return [element.clientWidth, element.clientHeight];
+	    }
+
+	    var _setPerspective = usePrefix ? function(element, perspective) {
+	        element.style.webkitPerspective = perspective ? perspective.toFixed() + 'px' : '';
+	    } : function(element, perspective) {
+	        element.style.perspective = perspective ? perspective.toFixed() + 'px' : '';
+	    };
+
+	    /**
+	     * The top-level container for a Famous-renderable piece of the document.
+	     *   It is directly updated by the process-wide Engine object, and manages one
+	     *   render tree root, which can contain other renderables.
+	     *
+	     * @class Context
+	     * @constructor
+	     * @private
+	     * @param {Node} container Element in which content will be inserted
+	     */
+	    function Context(container) {
+	        this.container = container;
+	        this._allocator = new ElementAllocator(container);
+
+	        this._node = new RenderNode();
+	        this._eventOutput = new EventHandler();
+	        this._size = _getElementSize(this.container);
+
+	        this._perspectiveState = new Transitionable(0);
+	        this._perspective = undefined;
+
+	        this._nodeContext = {
+	            allocator: this._allocator,
+	            transform: Transform.identity,
+	            opacity: 1,
+	            origin: _zeroZero,
+	            align: _zeroZero,
+	            size: this._size
+	        };
+
+	        this._eventOutput.on('resize', function() {
+	            this.setSize(_getElementSize(this.container));
+	        }.bind(this));
+
+	    }
+
+	    // Note: Unused
+	    Context.prototype.getAllocator = function getAllocator() {
+	        return this._allocator;
+	    };
+
+	    /**
+	     * Add renderables to this Context's render tree.
+	     *
+	     * @method add
+	     *
+	     * @param {Object} obj renderable object
+	     * @return {RenderNode} RenderNode wrapping this object, if not already a RenderNode
+	     */
+	    Context.prototype.add = function add(obj) {
+	        return this._node.add(obj);
+	    };
+
+	    /**
+	     * Move this Context to another containing document element.
+	     *
+	     * @method migrate
+	     *
+	     * @param {Node} container Element to which content will be migrated
+	     */
+	    Context.prototype.migrate = function migrate(container) {
+	        if (container === this.container) return;
+	        this.container = container;
+	        this._allocator.migrate(container);
+	    };
+
+	    /**
+	     * Gets viewport size for Context.
+	     *
+	     * @method getSize
+	     *
+	     * @return {Array.Number} viewport size as [width, height]
+	     */
+	    Context.prototype.getSize = function getSize() {
+	        return this._size;
+	    };
+
+	    /**
+	     * Sets viewport size for Context.
+	     *
+	     * @method setSize
+	     *
+	     * @param {Array.Number} size [width, height].  If unspecified, use size of root document element.
+	     */
+	    Context.prototype.setSize = function setSize(size) {
+	        if (!size) size = _getElementSize(this.container);
+	        this._size[0] = size[0];
+	        this._size[1] = size[1];
+	    };
+
+	    /**
+	     * Commit this Context's content changes to the document.
+	     *
+	     * @private
+	     * @method update
+	     * @param {Object} contextParameters engine commit specification
+	     */
+	    Context.prototype.update = function update(contextParameters) {
+	        if (contextParameters) {
+	            if (contextParameters.transform) this._nodeContext.transform = contextParameters.transform;
+	            if (contextParameters.opacity) this._nodeContext.opacity = contextParameters.opacity;
+	            if (contextParameters.origin) this._nodeContext.origin = contextParameters.origin;
+	            if (contextParameters.align) this._nodeContext.align = contextParameters.align;
+	            if (contextParameters.size) this._nodeContext.size = contextParameters.size;
+	        }
+	        var perspective = this._perspectiveState.get();
+	        if (perspective !== this._perspective) {
+	            _setPerspective(this.container, perspective);
+	            this._perspective = perspective;
+	        }
+
+	        this._node.commit(this._nodeContext);
+	    };
+
+	    /**
+	     * Get current perspective of this context in pixels.
+	     *
+	     * @method getPerspective
+	     * @return {Number} depth perspective in pixels
+	     */
+	    Context.prototype.getPerspective = function getPerspective() {
+	        return this._perspectiveState.get();
+	    };
+
+	    /**
+	     * Set current perspective of this context in pixels.
+	     *
+	     * @method setPerspective
+	     * @param {Number} perspective in pixels
+	     * @param {Object} [transition] Transitionable object for applying the change
+	     * @param {function(Object)} callback function called on completion of transition
+	     */
+	    Context.prototype.setPerspective = function setPerspective(perspective, transition, callback) {
+	        return this._perspectiveState.set(perspective, transition, callback);
+	    };
+
+	    /**
+	     * Trigger an event, sending to all downstream handlers
+	     *   listening for provided 'type' key.
+	     *
+	     * @method emit
+	     *
+	     * @param {string} type event type key (for example, 'click')
+	     * @param {Object} event event data
+	     * @return {EventHandler} this
+	     */
+	    Context.prototype.emit = function emit(type, event) {
+	        return this._eventOutput.emit(type, event);
+	    };
+
+	    /**
+	     * Bind a callback function to an event type handled by this object.
+	     *
+	     * @method "on"
+	     *
+	     * @param {string} type event type key (for example, 'click')
+	     * @param {function(string, Object)} handler callback
+	     * @return {EventHandler} this
+	     */
+	    Context.prototype.on = function on(type, handler) {
+	        return this._eventOutput.on(type, handler);
+	    };
+
+	    /**
+	     * Unbind an event by type and handler.
+	     *   This undoes the work of "on".
+	     *
+	     * @method removeListener
+	     *
+	     * @param {string} type event type key (for example, 'click')
+	     * @param {function} handler function object to remove
+	     * @return {EventHandler} internal event handler object (for chaining)
+	     */
+	    Context.prototype.removeListener = function removeListener(type, handler) {
+	        return this._eventOutput.removeListener(type, handler);
+	    };
+
+	    /**
+	     * Add event handler object to set of downstream handlers.
+	     *
+	     * @method pipe
+	     *
+	     * @param {EventHandler} target event handler target object
+	     * @return {EventHandler} passed event handler
+	     */
+	    Context.prototype.pipe = function pipe(target) {
+	        return this._eventOutput.pipe(target);
+	    };
+
+	    /**
+	     * Remove handler object from set of downstream handlers.
+	     *   Undoes work of "pipe".
+	     *
+	     * @method unpipe
+	     *
+	     * @param {EventHandler} target target handler object
+	     * @return {EventHandler} provided target
+	     */
+	    Context.prototype.unpipe = function unpipe(target) {
+	        return this._eventOutput.unpipe(target);
+	    };
+
+	    module.exports = Context;
+	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 56 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;/* This Source Code Form is subject to the terms of the Mozilla Public
+	 * License, v. 2.0. If a copy of the MPL was not distributed with this
+	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+	 *
+	 * Owner: mark@famo.us
+	 * @license MPL 2.0
+	 * @copyright Famous Industries, Inc. 2014
+	 */
+
+	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 	    var Entity = __webpack_require__(43);
 	    var EventHandler = __webpack_require__(46);
-	    var Transform = __webpack_require__(23);
+	    var Transform = __webpack_require__(24);
 
 	    var usePrefix = !('transform' in document.documentElement.style);
 	    var devicePixelRatio = window.devicePixelRatio || 1;
@@ -15173,245 +15437,6 @@
 
 
 /***/ },
-/* 56 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_RESULT__;/* This Source Code Form is subject to the terms of the Mozilla Public
-	 * License, v. 2.0. If a copy of the MPL was not distributed with this
-	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
-	 *
-	 * Owner: mark@famo.us
-	 * @license MPL 2.0
-	 * @copyright Famous Industries, Inc. 2014
-	 */
-
-	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	    var RenderNode = __webpack_require__(24);
-	    var EventHandler = __webpack_require__(46);
-	    var ElementAllocator = __webpack_require__(70);
-	    var Transform = __webpack_require__(23);
-	    var Transitionable = __webpack_require__(58);
-
-	    var _zeroZero = [0, 0];
-	    var usePrefix = !('perspective' in document.documentElement.style);
-
-	    function _getElementSize(element) {
-	        return [element.clientWidth, element.clientHeight];
-	    }
-
-	    var _setPerspective = usePrefix ? function(element, perspective) {
-	        element.style.webkitPerspective = perspective ? perspective.toFixed() + 'px' : '';
-	    } : function(element, perspective) {
-	        element.style.perspective = perspective ? perspective.toFixed() + 'px' : '';
-	    };
-
-	    /**
-	     * The top-level container for a Famous-renderable piece of the document.
-	     *   It is directly updated by the process-wide Engine object, and manages one
-	     *   render tree root, which can contain other renderables.
-	     *
-	     * @class Context
-	     * @constructor
-	     * @private
-	     * @param {Node} container Element in which content will be inserted
-	     */
-	    function Context(container) {
-	        this.container = container;
-	        this._allocator = new ElementAllocator(container);
-
-	        this._node = new RenderNode();
-	        this._eventOutput = new EventHandler();
-	        this._size = _getElementSize(this.container);
-
-	        this._perspectiveState = new Transitionable(0);
-	        this._perspective = undefined;
-
-	        this._nodeContext = {
-	            allocator: this._allocator,
-	            transform: Transform.identity,
-	            opacity: 1,
-	            origin: _zeroZero,
-	            align: _zeroZero,
-	            size: this._size
-	        };
-
-	        this._eventOutput.on('resize', function() {
-	            this.setSize(_getElementSize(this.container));
-	        }.bind(this));
-
-	    }
-
-	    // Note: Unused
-	    Context.prototype.getAllocator = function getAllocator() {
-	        return this._allocator;
-	    };
-
-	    /**
-	     * Add renderables to this Context's render tree.
-	     *
-	     * @method add
-	     *
-	     * @param {Object} obj renderable object
-	     * @return {RenderNode} RenderNode wrapping this object, if not already a RenderNode
-	     */
-	    Context.prototype.add = function add(obj) {
-	        return this._node.add(obj);
-	    };
-
-	    /**
-	     * Move this Context to another containing document element.
-	     *
-	     * @method migrate
-	     *
-	     * @param {Node} container Element to which content will be migrated
-	     */
-	    Context.prototype.migrate = function migrate(container) {
-	        if (container === this.container) return;
-	        this.container = container;
-	        this._allocator.migrate(container);
-	    };
-
-	    /**
-	     * Gets viewport size for Context.
-	     *
-	     * @method getSize
-	     *
-	     * @return {Array.Number} viewport size as [width, height]
-	     */
-	    Context.prototype.getSize = function getSize() {
-	        return this._size;
-	    };
-
-	    /**
-	     * Sets viewport size for Context.
-	     *
-	     * @method setSize
-	     *
-	     * @param {Array.Number} size [width, height].  If unspecified, use size of root document element.
-	     */
-	    Context.prototype.setSize = function setSize(size) {
-	        if (!size) size = _getElementSize(this.container);
-	        this._size[0] = size[0];
-	        this._size[1] = size[1];
-	    };
-
-	    /**
-	     * Commit this Context's content changes to the document.
-	     *
-	     * @private
-	     * @method update
-	     * @param {Object} contextParameters engine commit specification
-	     */
-	    Context.prototype.update = function update(contextParameters) {
-	        if (contextParameters) {
-	            if (contextParameters.transform) this._nodeContext.transform = contextParameters.transform;
-	            if (contextParameters.opacity) this._nodeContext.opacity = contextParameters.opacity;
-	            if (contextParameters.origin) this._nodeContext.origin = contextParameters.origin;
-	            if (contextParameters.align) this._nodeContext.align = contextParameters.align;
-	            if (contextParameters.size) this._nodeContext.size = contextParameters.size;
-	        }
-	        var perspective = this._perspectiveState.get();
-	        if (perspective !== this._perspective) {
-	            _setPerspective(this.container, perspective);
-	            this._perspective = perspective;
-	        }
-
-	        this._node.commit(this._nodeContext);
-	    };
-
-	    /**
-	     * Get current perspective of this context in pixels.
-	     *
-	     * @method getPerspective
-	     * @return {Number} depth perspective in pixels
-	     */
-	    Context.prototype.getPerspective = function getPerspective() {
-	        return this._perspectiveState.get();
-	    };
-
-	    /**
-	     * Set current perspective of this context in pixels.
-	     *
-	     * @method setPerspective
-	     * @param {Number} perspective in pixels
-	     * @param {Object} [transition] Transitionable object for applying the change
-	     * @param {function(Object)} callback function called on completion of transition
-	     */
-	    Context.prototype.setPerspective = function setPerspective(perspective, transition, callback) {
-	        return this._perspectiveState.set(perspective, transition, callback);
-	    };
-
-	    /**
-	     * Trigger an event, sending to all downstream handlers
-	     *   listening for provided 'type' key.
-	     *
-	     * @method emit
-	     *
-	     * @param {string} type event type key (for example, 'click')
-	     * @param {Object} event event data
-	     * @return {EventHandler} this
-	     */
-	    Context.prototype.emit = function emit(type, event) {
-	        return this._eventOutput.emit(type, event);
-	    };
-
-	    /**
-	     * Bind a callback function to an event type handled by this object.
-	     *
-	     * @method "on"
-	     *
-	     * @param {string} type event type key (for example, 'click')
-	     * @param {function(string, Object)} handler callback
-	     * @return {EventHandler} this
-	     */
-	    Context.prototype.on = function on(type, handler) {
-	        return this._eventOutput.on(type, handler);
-	    };
-
-	    /**
-	     * Unbind an event by type and handler.
-	     *   This undoes the work of "on".
-	     *
-	     * @method removeListener
-	     *
-	     * @param {string} type event type key (for example, 'click')
-	     * @param {function} handler function object to remove
-	     * @return {EventHandler} internal event handler object (for chaining)
-	     */
-	    Context.prototype.removeListener = function removeListener(type, handler) {
-	        return this._eventOutput.removeListener(type, handler);
-	    };
-
-	    /**
-	     * Add event handler object to set of downstream handlers.
-	     *
-	     * @method pipe
-	     *
-	     * @param {EventHandler} target event handler target object
-	     * @return {EventHandler} passed event handler
-	     */
-	    Context.prototype.pipe = function pipe(target) {
-	        return this._eventOutput.pipe(target);
-	    };
-
-	    /**
-	     * Remove handler object from set of downstream handlers.
-	     *   Undoes work of "pipe".
-	     *
-	     * @method unpipe
-	     *
-	     * @param {EventHandler} target target handler object
-	     * @return {EventHandler} provided target
-	     */
-	    Context.prototype.unpipe = function unpipe(target) {
-	        return this._eventOutput.unpipe(target);
-	    };
-
-	    module.exports = Context;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ },
 /* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -15425,7 +15450,7 @@
 	 */
 
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	    var Transform = __webpack_require__(23);
+	    var Transform = __webpack_require__(24);
 
 	    /**
 	     *
@@ -15836,7 +15861,7 @@
 
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 	    var Transitionable = __webpack_require__(58);
-	    var Transform = __webpack_require__(23);
+	    var Transform = __webpack_require__(24);
 	    var Utility = __webpack_require__(42);
 
 	    /**
@@ -16062,166 +16087,166 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./af": 75,
-		"./af.js": 75,
-		"./ar": 79,
-		"./ar-ma": 76,
-		"./ar-ma.js": 76,
-		"./ar-sa": 77,
-		"./ar-sa.js": 77,
-		"./ar-tn": 78,
-		"./ar-tn.js": 78,
-		"./ar.js": 79,
-		"./az": 80,
-		"./az.js": 80,
-		"./be": 81,
-		"./be.js": 81,
-		"./bg": 82,
-		"./bg.js": 82,
-		"./bn": 83,
-		"./bn.js": 83,
-		"./bo": 84,
-		"./bo.js": 84,
-		"./br": 85,
-		"./br.js": 85,
-		"./bs": 86,
-		"./bs.js": 86,
-		"./ca": 87,
-		"./ca.js": 87,
-		"./cs": 88,
-		"./cs.js": 88,
-		"./cv": 89,
-		"./cv.js": 89,
-		"./cy": 90,
-		"./cy.js": 90,
-		"./da": 91,
-		"./da.js": 91,
-		"./de": 93,
-		"./de-at": 92,
-		"./de-at.js": 92,
-		"./de.js": 93,
-		"./el": 94,
-		"./el.js": 94,
-		"./en-au": 95,
-		"./en-au.js": 95,
-		"./en-ca": 96,
-		"./en-ca.js": 96,
-		"./en-gb": 97,
-		"./en-gb.js": 97,
-		"./eo": 98,
-		"./eo.js": 98,
-		"./es": 99,
-		"./es.js": 99,
-		"./et": 100,
-		"./et.js": 100,
-		"./eu": 101,
-		"./eu.js": 101,
-		"./fa": 102,
-		"./fa.js": 102,
-		"./fi": 103,
-		"./fi.js": 103,
-		"./fo": 104,
-		"./fo.js": 104,
-		"./fr": 106,
-		"./fr-ca": 105,
-		"./fr-ca.js": 105,
-		"./fr.js": 106,
-		"./fy": 107,
-		"./fy.js": 107,
-		"./gl": 108,
-		"./gl.js": 108,
-		"./he": 109,
-		"./he.js": 109,
-		"./hi": 110,
-		"./hi.js": 110,
-		"./hr": 111,
-		"./hr.js": 111,
-		"./hu": 112,
-		"./hu.js": 112,
-		"./hy-am": 113,
-		"./hy-am.js": 113,
-		"./id": 114,
-		"./id.js": 114,
-		"./is": 115,
-		"./is.js": 115,
-		"./it": 116,
-		"./it.js": 116,
-		"./ja": 117,
-		"./ja.js": 117,
-		"./ka": 118,
-		"./ka.js": 118,
-		"./km": 119,
-		"./km.js": 119,
-		"./ko": 120,
-		"./ko.js": 120,
-		"./lb": 121,
-		"./lb.js": 121,
-		"./lt": 122,
-		"./lt.js": 122,
-		"./lv": 123,
-		"./lv.js": 123,
-		"./mk": 124,
-		"./mk.js": 124,
-		"./ml": 125,
-		"./ml.js": 125,
-		"./mr": 126,
-		"./mr.js": 126,
-		"./ms-my": 127,
-		"./ms-my.js": 127,
-		"./my": 128,
-		"./my.js": 128,
-		"./nb": 129,
-		"./nb.js": 129,
-		"./ne": 130,
-		"./ne.js": 130,
-		"./nl": 131,
-		"./nl.js": 131,
-		"./nn": 132,
-		"./nn.js": 132,
-		"./pl": 133,
-		"./pl.js": 133,
-		"./pt": 135,
-		"./pt-br": 134,
-		"./pt-br.js": 134,
-		"./pt.js": 135,
-		"./ro": 136,
-		"./ro.js": 136,
-		"./ru": 137,
-		"./ru.js": 137,
-		"./sk": 138,
-		"./sk.js": 138,
-		"./sl": 139,
-		"./sl.js": 139,
-		"./sq": 140,
-		"./sq.js": 140,
-		"./sr": 142,
-		"./sr-cyrl": 141,
-		"./sr-cyrl.js": 141,
-		"./sr.js": 142,
-		"./sv": 143,
-		"./sv.js": 143,
-		"./ta": 144,
-		"./ta.js": 144,
-		"./th": 145,
-		"./th.js": 145,
-		"./tl-ph": 146,
-		"./tl-ph.js": 146,
-		"./tr": 147,
-		"./tr.js": 147,
-		"./tzm": 149,
-		"./tzm-latn": 148,
-		"./tzm-latn.js": 148,
-		"./tzm.js": 149,
-		"./uk": 150,
-		"./uk.js": 150,
-		"./uz": 151,
-		"./uz.js": 151,
-		"./vi": 152,
-		"./vi.js": 152,
-		"./zh-cn": 153,
-		"./zh-cn.js": 153,
-		"./zh-tw": 154,
-		"./zh-tw.js": 154
+		"./af": 73,
+		"./af.js": 73,
+		"./ar": 77,
+		"./ar-ma": 74,
+		"./ar-ma.js": 74,
+		"./ar-sa": 75,
+		"./ar-sa.js": 75,
+		"./ar-tn": 76,
+		"./ar-tn.js": 76,
+		"./ar.js": 77,
+		"./az": 78,
+		"./az.js": 78,
+		"./be": 79,
+		"./be.js": 79,
+		"./bg": 80,
+		"./bg.js": 80,
+		"./bn": 81,
+		"./bn.js": 81,
+		"./bo": 82,
+		"./bo.js": 82,
+		"./br": 83,
+		"./br.js": 83,
+		"./bs": 84,
+		"./bs.js": 84,
+		"./ca": 85,
+		"./ca.js": 85,
+		"./cs": 86,
+		"./cs.js": 86,
+		"./cv": 87,
+		"./cv.js": 87,
+		"./cy": 88,
+		"./cy.js": 88,
+		"./da": 89,
+		"./da.js": 89,
+		"./de": 91,
+		"./de-at": 90,
+		"./de-at.js": 90,
+		"./de.js": 91,
+		"./el": 92,
+		"./el.js": 92,
+		"./en-au": 93,
+		"./en-au.js": 93,
+		"./en-ca": 94,
+		"./en-ca.js": 94,
+		"./en-gb": 95,
+		"./en-gb.js": 95,
+		"./eo": 96,
+		"./eo.js": 96,
+		"./es": 97,
+		"./es.js": 97,
+		"./et": 98,
+		"./et.js": 98,
+		"./eu": 99,
+		"./eu.js": 99,
+		"./fa": 100,
+		"./fa.js": 100,
+		"./fi": 101,
+		"./fi.js": 101,
+		"./fo": 102,
+		"./fo.js": 102,
+		"./fr": 104,
+		"./fr-ca": 103,
+		"./fr-ca.js": 103,
+		"./fr.js": 104,
+		"./fy": 105,
+		"./fy.js": 105,
+		"./gl": 106,
+		"./gl.js": 106,
+		"./he": 107,
+		"./he.js": 107,
+		"./hi": 108,
+		"./hi.js": 108,
+		"./hr": 109,
+		"./hr.js": 109,
+		"./hu": 110,
+		"./hu.js": 110,
+		"./hy-am": 111,
+		"./hy-am.js": 111,
+		"./id": 112,
+		"./id.js": 112,
+		"./is": 113,
+		"./is.js": 113,
+		"./it": 114,
+		"./it.js": 114,
+		"./ja": 115,
+		"./ja.js": 115,
+		"./ka": 116,
+		"./ka.js": 116,
+		"./km": 117,
+		"./km.js": 117,
+		"./ko": 118,
+		"./ko.js": 118,
+		"./lb": 119,
+		"./lb.js": 119,
+		"./lt": 120,
+		"./lt.js": 120,
+		"./lv": 121,
+		"./lv.js": 121,
+		"./mk": 122,
+		"./mk.js": 122,
+		"./ml": 123,
+		"./ml.js": 123,
+		"./mr": 124,
+		"./mr.js": 124,
+		"./ms-my": 125,
+		"./ms-my.js": 125,
+		"./my": 126,
+		"./my.js": 126,
+		"./nb": 127,
+		"./nb.js": 127,
+		"./ne": 128,
+		"./ne.js": 128,
+		"./nl": 129,
+		"./nl.js": 129,
+		"./nn": 130,
+		"./nn.js": 130,
+		"./pl": 131,
+		"./pl.js": 131,
+		"./pt": 133,
+		"./pt-br": 132,
+		"./pt-br.js": 132,
+		"./pt.js": 133,
+		"./ro": 134,
+		"./ro.js": 134,
+		"./ru": 135,
+		"./ru.js": 135,
+		"./sk": 136,
+		"./sk.js": 136,
+		"./sl": 137,
+		"./sl.js": 137,
+		"./sq": 138,
+		"./sq.js": 138,
+		"./sr": 140,
+		"./sr-cyrl": 139,
+		"./sr-cyrl.js": 139,
+		"./sr.js": 140,
+		"./sv": 141,
+		"./sv.js": 141,
+		"./ta": 142,
+		"./ta.js": 142,
+		"./th": 143,
+		"./th.js": 143,
+		"./tl-ph": 144,
+		"./tl-ph.js": 144,
+		"./tr": 145,
+		"./tr.js": 145,
+		"./tzm": 147,
+		"./tzm-latn": 146,
+		"./tzm-latn.js": 146,
+		"./tzm.js": 147,
+		"./uk": 148,
+		"./uk.js": 148,
+		"./uz": 149,
+		"./uz.js": 149,
+		"./vi": 150,
+		"./vi.js": 150,
+		"./zh-cn": 151,
+		"./zh-cn.js": 151,
+		"./zh-tw": 152,
+		"./zh-tw.js": 152
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -16251,8 +16276,8 @@
 	 */
 
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	    var Context = __webpack_require__(56);
-	    var Transform = __webpack_require__(23);
+	    var Context = __webpack_require__(55);
+	    var Transform = __webpack_require__(24);
 	    var Surface = __webpack_require__(20);
 
 	    /**
@@ -17301,9 +17326,9 @@
 
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 	    var Vector = __webpack_require__(62);
-	    var Transform = __webpack_require__(23);
+	    var Transform = __webpack_require__(24);
 	    var EventHandler = __webpack_require__(46);
-	    var Integrator = __webpack_require__(155);
+	    var Integrator = __webpack_require__(154);
 
 	    /**
 	     * A point body that is controlled by the Physics Engine. A particle has
@@ -17693,7 +17718,7 @@
 	 */
 
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	    var Force = __webpack_require__(74);
+	    var Force = __webpack_require__(155);
 
 	    /**
 	     * Drag is a force that opposes velocity. Attach it to the physics engine
@@ -17820,7 +17845,7 @@
 	/*global console */
 
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	    var Force = __webpack_require__(74);
+	    var Force = __webpack_require__(155);
 	    var Vector = __webpack_require__(62);
 
 	    /**
@@ -19282,89 +19307,6 @@
 /* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = function(module) {
-		if(!module.webpackPolyfill) {
-			module.deprecate = function() {};
-			module.paths = [];
-			// module.parent = undefined by default
-			module.children = [];
-			module.webpackPolyfill = 1;
-		}
-		return module;
-	}
-
-
-/***/ },
-/* 74 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_RESULT__;/* This Source Code Form is subject to the terms of the Mozilla Public
-	 * License, v. 2.0. If a copy of the MPL was not distributed with this
-	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
-	 *
-	 * Owner: david@famo.us
-	 * @license MPL 2.0
-	 * @copyright Famous Industries, Inc. 2014
-	 */
-
-	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	    var Vector = __webpack_require__(62);
-	    var EventHandler = __webpack_require__(46);
-
-	    /**
-	     * Force base class.
-	     *
-	     * @class Force
-	     * @uses EventHandler
-	     * @constructor
-	     */
-	    function Force(force) {
-	        this.force = new Vector(force);
-	        this._eventOutput = new EventHandler();
-	        EventHandler.setOutputHandler(this, this._eventOutput);
-	    }
-
-	    /**
-	     * Basic setter for options
-	     *
-	     * @method setOptions
-	     * @param options {Objects}
-	     */
-	    Force.prototype.setOptions = function setOptions(options) {
-	        this._eventOutput.emit('change', options);
-	    };
-
-	    /**
-	     * Adds a force to a physics body's force accumulator.
-	     *
-	     * @method applyForce
-	     * @param targets {Array.Body} Array of bodies to apply a force to.
-	     */
-	    Force.prototype.applyForce = function applyForce(targets) {
-	        var length = targets.length;
-	        while (length--) {
-	            targets[length].applyForce(this.force);
-	        }
-	    };
-
-	    /**
-	     * Getter for a force's potential energy.
-	     *
-	     * @method getEnergy
-	     * @return energy {Number}
-	     */
-	    Force.prototype.getEnergy = function getEnergy() {
-	        return 0.0;
-	    };
-
-	    module.exports = Force;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ },
-/* 75 */
-/***/ function(module, exports, __webpack_require__) {
-
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
 	// locale : afrikaans (af)
 	// author : Werner Mollentze : https://github.com/wernerm
@@ -19439,7 +19381,7 @@
 
 
 /***/ },
-/* 76 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -19502,7 +19444,7 @@
 
 
 /***/ },
-/* 77 */
+/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -19609,7 +19551,7 @@
 
 
 /***/ },
-/* 78 */
+/* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -19670,7 +19612,7 @@
 
 
 /***/ },
-/* 79 */
+/* 77 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -19810,7 +19752,7 @@
 
 
 /***/ },
-/* 80 */
+/* 78 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -19923,7 +19865,7 @@
 
 
 /***/ },
-/* 81 */
+/* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -20083,7 +20025,7 @@
 
 
 /***/ },
-/* 82 */
+/* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -20177,7 +20119,7 @@
 
 
 /***/ },
-/* 83 */
+/* 81 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -20294,7 +20236,7 @@
 
 
 /***/ },
-/* 84 */
+/* 82 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -20408,7 +20350,7 @@
 
 
 /***/ },
-/* 85 */
+/* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -20523,7 +20465,7 @@
 
 
 /***/ },
-/* 86 */
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -20669,7 +20611,7 @@
 
 
 /***/ },
-/* 87 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -20752,7 +20694,7 @@
 
 
 /***/ },
-/* 88 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -20915,7 +20857,7 @@
 
 
 /***/ },
-/* 89 */
+/* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -20982,7 +20924,7 @@
 
 
 /***/ },
-/* 90 */
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -21067,7 +21009,7 @@
 
 
 /***/ },
-/* 91 */
+/* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -21131,7 +21073,7 @@
 
 
 /***/ },
-/* 92 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -21211,7 +21153,7 @@
 
 
 /***/ },
-/* 93 */
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -21290,7 +21232,7 @@
 
 
 /***/ },
-/* 94 */
+/* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -21390,7 +21332,7 @@
 
 
 /***/ },
-/* 95 */
+/* 93 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -21460,7 +21402,7 @@
 
 
 /***/ },
-/* 96 */
+/* 94 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -21527,7 +21469,7 @@
 
 
 /***/ },
-/* 97 */
+/* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -21598,7 +21540,7 @@
 
 
 /***/ },
-/* 98 */
+/* 96 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -21675,7 +21617,7 @@
 
 
 /***/ },
-/* 99 */
+/* 97 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -21758,7 +21700,7 @@
 
 
 /***/ },
-/* 100 */
+/* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -21842,7 +21784,7 @@
 
 
 /***/ },
-/* 101 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -21910,7 +21852,7 @@
 
 
 /***/ },
-/* 102 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -22019,7 +21961,7 @@
 
 
 /***/ },
-/* 103 */
+/* 101 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -22132,7 +22074,7 @@
 
 
 /***/ },
-/* 104 */
+/* 102 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -22196,7 +22138,7 @@
 
 
 /***/ },
-/* 105 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -22258,7 +22200,7 @@
 
 
 /***/ },
-/* 106 */
+/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -22324,7 +22266,7 @@
 
 
 /***/ },
-/* 107 */
+/* 105 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -22399,7 +22341,7 @@
 
 
 /***/ },
-/* 108 */
+/* 106 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -22478,7 +22420,7 @@
 
 
 /***/ },
-/* 109 */
+/* 107 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -22564,7 +22506,7 @@
 
 
 /***/ },
-/* 110 */
+/* 108 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -22691,7 +22633,7 @@
 
 
 /***/ },
-/* 111 */
+/* 109 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -22838,7 +22780,7 @@
 
 
 /***/ },
-/* 112 */
+/* 110 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -22955,7 +22897,7 @@
 
 
 /***/ },
-/* 113 */
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -23079,7 +23021,7 @@
 
 
 /***/ },
-/* 114 */
+/* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -23166,7 +23108,7 @@
 
 
 /***/ },
-/* 115 */
+/* 113 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -23298,7 +23240,7 @@
 
 
 /***/ },
-/* 116 */
+/* 114 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -23372,7 +23314,7 @@
 
 
 /***/ },
-/* 117 */
+/* 115 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -23441,7 +23383,7 @@
 
 
 /***/ },
-/* 118 */
+/* 116 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -23556,7 +23498,7 @@
 
 
 /***/ },
-/* 119 */
+/* 117 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -23618,7 +23560,7 @@
 
 
 /***/ },
-/* 120 */
+/* 118 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -23689,7 +23631,7 @@
 
 
 /***/ },
-/* 121 */
+/* 119 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -23834,7 +23776,7 @@
 
 
 /***/ },
-/* 122 */
+/* 120 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -23960,7 +23902,7 @@
 
 
 /***/ },
-/* 123 */
+/* 121 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -24045,7 +23987,7 @@
 
 
 /***/ },
-/* 124 */
+/* 122 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -24139,7 +24081,7 @@
 
 
 /***/ },
-/* 125 */
+/* 123 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -24214,7 +24156,7 @@
 
 
 /***/ },
-/* 126 */
+/* 124 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -24340,7 +24282,7 @@
 
 
 /***/ },
-/* 127 */
+/* 125 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -24426,7 +24368,7 @@
 
 
 /***/ },
-/* 128 */
+/* 126 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -24521,7 +24463,7 @@
 
 
 /***/ },
-/* 129 */
+/* 127 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -24586,7 +24528,7 @@
 
 
 /***/ },
-/* 130 */
+/* 128 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -24713,7 +24655,7 @@
 
 
 /***/ },
-/* 131 */
+/* 129 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -24788,7 +24730,7 @@
 
 
 /***/ },
-/* 132 */
+/* 130 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -24852,7 +24794,7 @@
 
 
 /***/ },
-/* 133 */
+/* 131 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -24958,7 +24900,7 @@
 
 
 /***/ },
-/* 134 */
+/* 132 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -25022,7 +24964,7 @@
 
 
 /***/ },
-/* 135 */
+/* 133 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -25090,7 +25032,7 @@
 
 
 /***/ },
-/* 136 */
+/* 134 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -25169,7 +25111,7 @@
 
 
 /***/ },
-/* 137 */
+/* 135 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -25351,7 +25293,7 @@
 
 
 /***/ },
-/* 138 */
+/* 136 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -25515,7 +25457,7 @@
 
 
 /***/ },
-/* 139 */
+/* 137 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -25667,7 +25609,7 @@
 
 
 /***/ },
-/* 140 */
+/* 138 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -25740,7 +25682,7 @@
 
 
 /***/ },
-/* 141 */
+/* 139 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -25853,7 +25795,7 @@
 
 
 /***/ },
-/* 142 */
+/* 140 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -25966,7 +25908,7 @@
 
 
 /***/ },
-/* 143 */
+/* 141 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -26037,7 +25979,7 @@
 
 
 /***/ },
-/* 144 */
+/* 142 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -26173,7 +26115,7 @@
 
 
 /***/ },
-/* 145 */
+/* 143 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -26242,7 +26184,7 @@
 
 
 /***/ },
-/* 146 */
+/* 144 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -26308,7 +26250,7 @@
 
 
 /***/ },
-/* 147 */
+/* 145 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -26408,7 +26350,7 @@
 
 
 /***/ },
-/* 148 */
+/* 146 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -26470,7 +26412,7 @@
 
 
 /***/ },
-/* 149 */
+/* 147 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -26532,7 +26474,7 @@
 
 
 /***/ },
-/* 150 */
+/* 148 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -26701,7 +26643,7 @@
 
 
 /***/ },
-/* 151 */
+/* 149 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -26763,7 +26705,7 @@
 
 
 /***/ },
-/* 152 */
+/* 150 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -26833,7 +26775,7 @@
 
 
 /***/ },
-/* 153 */
+/* 151 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -26964,7 +26906,7 @@
 
 
 /***/ },
-/* 154 */
+/* 152 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// moment.js locale configuration
@@ -27069,7 +27011,23 @@
 
 
 /***/ },
-/* 155 */
+/* 153 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = function(module) {
+		if(!module.webpackPolyfill) {
+			module.deprecate = function() {};
+			module.paths = [];
+			// module.parent = undefined by default
+			module.children = [];
+			module.webpackPolyfill = 1;
+		}
+		return module;
+	}
+
+
+/***/ },
+/* 154 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* This Source Code Form is subject to the terms of the Mozilla Public
@@ -27173,6 +27131,73 @@
 	    };
 
 	    module.exports = SymplecticEuler;
+	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 155 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;/* This Source Code Form is subject to the terms of the Mozilla Public
+	 * License, v. 2.0. If a copy of the MPL was not distributed with this
+	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+	 *
+	 * Owner: david@famo.us
+	 * @license MPL 2.0
+	 * @copyright Famous Industries, Inc. 2014
+	 */
+
+	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
+	    var Vector = __webpack_require__(62);
+	    var EventHandler = __webpack_require__(46);
+
+	    /**
+	     * Force base class.
+	     *
+	     * @class Force
+	     * @uses EventHandler
+	     * @constructor
+	     */
+	    function Force(force) {
+	        this.force = new Vector(force);
+	        this._eventOutput = new EventHandler();
+	        EventHandler.setOutputHandler(this, this._eventOutput);
+	    }
+
+	    /**
+	     * Basic setter for options
+	     *
+	     * @method setOptions
+	     * @param options {Objects}
+	     */
+	    Force.prototype.setOptions = function setOptions(options) {
+	        this._eventOutput.emit('change', options);
+	    };
+
+	    /**
+	     * Adds a force to a physics body's force accumulator.
+	     *
+	     * @method applyForce
+	     * @param targets {Array.Body} Array of bodies to apply a force to.
+	     */
+	    Force.prototype.applyForce = function applyForce(targets) {
+	        var length = targets.length;
+	        while (length--) {
+	            targets[length].applyForce(this.force);
+	        }
+	    };
+
+	    /**
+	     * Getter for a force's potential energy.
+	     *
+	     * @method getEnergy
+	     * @return energy {Number}
+	     */
+	    Force.prototype.getEnergy = function getEnergy() {
+	        return 0.0;
+	    };
+
+	    module.exports = Force;
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
