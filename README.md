@@ -11,7 +11,7 @@ Date/time picker demo for famo.us using the [famous-flex](https://github.com/Ijz
 
 ## Tutorial
 
--	[DatePicker Tutorial](https://github.com/IjzerenHein/famous-flex/blob/master/tutorials/DatePicker.md)
+-	[DatePicker Tutorial](./tutorial/DatePicker.md)
 
 
 ## Examples
