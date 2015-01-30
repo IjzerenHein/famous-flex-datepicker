@@ -16,6 +16,7 @@ define(function(require) {
     //<webpack>
     require('famous-polyfills');
     require('famous/core/famous.css');
+    require('famous-flex/widgets/styles.css');
     require('./styles.css');
     require('./index.html');
     //</webpack>

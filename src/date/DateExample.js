@@ -40,9 +40,11 @@ define(function(require, exports, module) {
                 diameter: 320,
                 radialOpacity: -0.5
             },
-            container: {
-                classes: ['datepicker']
-            }
+            renderables: {
+                top: true,
+                bottom: true
+            },
+            classes: ['date']
         });
         this.datePicker.setComponents([
             new DatePicker.Component.Day(),
@@ -57,21 +59,13 @@ define(function(require, exports, module) {
                 sizeRatio: 2
             })
         ]);
-        this.datePicker.setOverlay({
-            top: new Surface({
-                classes: ['datepicker-overlay-top']
-            }),
-            bottom: new Surface({
-                classes: ['datepicker-overlay-bottom']
-            })
-        });
         this.add(this.datePicker);
         return this.datePicker;
     }
 
     function _createBack() {
         this.back = new Surface({
-            classes: ['datepicker-back']
+            classes: ['date', 'background']
         });
         var mod = new Modifier({
             transform: Transform.translate(0, 0, -1000)

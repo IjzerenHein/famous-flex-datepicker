@@ -28,9 +28,9 @@ define(function(require, exports, module) {
     function ClockExample(options) {
         View.apply(this, arguments);
 
-        _createDatePicker.call(this);
         _createBack.call(this);
         _createSeparators.call(this);
+        _createDatePicker.call(this);
     }
     ClockExample.prototype = Object.create(View.prototype);
     ClockExample.prototype.constructor = ClockExample;
@@ -50,9 +50,15 @@ define(function(require, exports, module) {
             scrollController: {
                 enabled: false
             },
-            container: {
-                classes: ['clock']
-            }
+            classes: ['clock'],
+            renderables: {
+                middle: true
+            },
+            createRenderable: function(id, data) {
+                if (id === 'middle') {
+                    return this.separators;
+                }
+            }.bind(this)
         });
         this.datePicker.setComponents([
             new DatePicker.Component.Hour({sizeRatio: this.options.sizeRatios[0]}),
@@ -75,7 +81,7 @@ define(function(require, exports, module) {
 
     function _createBack() {
         this.back = new Surface({
-            classes: ['clock-back']
+            classes: ['clock', 'background']
         });
         var mod = new Modifier({
             transform: Transform.translate(0, 0, -1000)
@@ -92,7 +98,7 @@ define(function(require, exports, module) {
             classes: ['clock-separator', 'clock-separator-2'],
             content: ':'
         });
-        var separators = new LayoutController({
+        this.separators = new LayoutController({
             layout: ProportionalLayout,
             layoutOptions: {
                 ratios: this.options.sizeRatios
@@ -103,9 +109,6 @@ define(function(require, exports, module) {
                 new RenderNode(),
                 separator2
             ]
-        });
-        this.datePicker.setOverlay({
-            middle: separators
         });
     }
 

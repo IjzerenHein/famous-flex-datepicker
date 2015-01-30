@@ -39,30 +39,24 @@ define(function(require, exports, module) {
                 diameter: 320,
                 radialOpacity: 0
             },
-            container: {
-                classes: ['timepicker']
-            }
+            renderables: {
+                top: true,
+                bottom: true
+            },
+            classes: ['time']
         });
         this.datePicker.setComponents([
             new DatePicker.Component.Hour(),
             new DatePicker.Component.Minute(),
             new DatePicker.Component.Second()
         ]);
-        this.datePicker.setOverlay({
-            top: new Surface({
-                classes: ['timepicker-overlay-top']
-            }),
-            bottom: new Surface({
-                classes: ['timepicker-overlay-bottom']
-            })
-        });
         this.add(this.datePicker);
         return this.datePicker;
     }
 
     function _createBack() {
         this.back = new Surface({
-            classes: ['timepicker-back']
+            classes: ['time', 'background']
         });
         var mod = new Modifier({
             transform: Transform.translate(0, 0, -1000)

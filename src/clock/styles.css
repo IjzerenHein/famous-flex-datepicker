@@ -1,13 +1,13 @@
 
-.clock-back {
-  background-color: black;
+.clock.background {
+ 	background-color: black;
 }
 
-.clock .item, .clock-separator {
-  color: white;
-  text-align: center;
-  font-size: 70px;
-  line-height: 80px;
+.ff-datepicker.clock.item, .clock-separator {
+	color: white;
+	text-align: center;
+	font-size: 70px;
+	line-height: 80px;
 }
 
 .clock-separator-1 {

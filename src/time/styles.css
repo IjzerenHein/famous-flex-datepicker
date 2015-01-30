@@ -1,25 +1,18 @@
 
-.timepicker-back {
+.time.background {
   background-color: #FFFCFC;
 }
 
-.timepicker-overlay-top, .timepicker-overlay-bottom {
-  background-color: rgba(255, 255, 255, 0.6);
-  pointer-events: none;
+.ff-datepicker.item.time {
+  font-size: 60px;
+  font-weight: normal;
 }
-
-.timepicker-overlay-top {
+.ff-datepicker.top.time {
+  background-color: rgba(255, 255, 255, 0.6);
   border-bottom: 1px solid #777777;
 }
 
-.timepicker-overlay-bottom {
+.ff-datepicker.bottom.time {
+  background-color: rgba(255, 255, 255, 0.6);
   border-top: 1px solid #777777;
-}
-
-.timepicker .item {
-  color: black;
-  text-align: center;
-  font-size: 60px;
-  font-weight: normal;
-  line-height: 80px;
 }

@@ -1,24 +1,18 @@
 
-.datetimepicker-back {
+.datetime.background {
   background-color: #FFFCFC;
 }
 
-.datetimepicker-overlay-top, .datetimepicker-overlay-bottom {
-  background-color: rgba(255, 255, 255, 0.6);
-  pointer-events: none;
+.ff-datepicker.item.datetime {
+  font-size: 32px;
+  font-weight: 100;
 }
-
-.datetimepicker-overlay-top {
+.ff-datepicker.top.datetime {
+  background-color: rgba(255, 255, 255, 0.6);
   border-bottom: 1px solid #777777;
 }
 
-.datetimepicker-overlay-bottom {
+.ff-datepicker.bottom.datetime {
+  background-color: rgba(255, 255, 255, 0.6);
   border-top: 1px solid #777777;
-}
-
-.datetimepicker .item {
-  text-align: center;
-  font-size: 32px;
-  font-weight: 100;
-  line-height: 50px;
 }
