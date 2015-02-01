@@ -209,16 +209,16 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 
 	    // import dependencies
-	    __webpack_require__(33);
+	    __webpack_require__(29);
 	    var View = __webpack_require__(23);
 	    var Surface = __webpack_require__(22);
-	    var RenderNode = __webpack_require__(26);
+	    var RenderNode = __webpack_require__(24);
 	    var DatePicker = __webpack_require__(17);
 	    var Timer = __webpack_require__(27);
 	    var LayoutController = __webpack_require__(13);
 	    var ProportionalLayout = __webpack_require__(18);
-	    var Modifier = __webpack_require__(24);
-	    var Transform = __webpack_require__(25);
+	    var Modifier = __webpack_require__(25);
+	    var Transform = __webpack_require__(26);
 
 	    function ClockExample(options) {
 	        View.apply(this, arguments);
@@ -246,14 +246,11 @@
 	                enabled: false
 	            },
 	            classes: ['clock'],
-	            renderables: {
-	                middle: true
-	            },
-	            createRenderable: function(id, data) {
-	                if (id === 'middle') {
+	            createRenderables: {
+	                middle: function() {
 	                    return this.separators;
-	                }
-	            }.bind(this)
+	                }.bind(this)
+	            }
 	        });
 	        this.datePicker.setComponents([
 	            new DatePicker.Component.Hour({sizeRatio: this.options.sizeRatios[0]}),
@@ -331,12 +328,12 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 
 	    // import dependencies
-	    __webpack_require__(29);
+	    __webpack_require__(31);
 	    var moment = __webpack_require__(40);
 	    var View = __webpack_require__(23);
 	    var Surface = __webpack_require__(22);
-	    var Modifier = __webpack_require__(24);
-	    var Transform = __webpack_require__(25);
+	    var Modifier = __webpack_require__(25);
+	    var Transform = __webpack_require__(26);
 	    var DatePicker = __webpack_require__(17);
 
 	    function DateExample(options) {
@@ -357,7 +354,7 @@
 	                diameter: 320,
 	                radialOpacity: -0.5
 	            },
-	            renderables: {
+	            createRenderables: {
 	                top: true,
 	                bottom: true
 	            },
@@ -414,11 +411,11 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 
 	    // import dependencies
-	    __webpack_require__(31);
+	    __webpack_require__(33);
 	    var View = __webpack_require__(23);
 	    var Surface = __webpack_require__(22);
-	    var Modifier = __webpack_require__(24);
-	    var Transform = __webpack_require__(25);
+	    var Modifier = __webpack_require__(25);
+	    var Transform = __webpack_require__(26);
 	    var DatePicker = __webpack_require__(17);
 
 	    function TimeExample(options) {
@@ -439,7 +436,7 @@
 	                diameter: 320,
 	                radialOpacity: 0
 	            },
-	            renderables: {
+	            createRenderables: {
 	                top: true,
 	                bottom: true
 	            },
@@ -492,8 +489,8 @@
 	    var moment = __webpack_require__(40);
 	    var View = __webpack_require__(23);
 	    var Surface = __webpack_require__(22);
-	    var Modifier = __webpack_require__(24);
-	    var Transform = __webpack_require__(25);
+	    var Modifier = __webpack_require__(25);
+	    var Transform = __webpack_require__(26);
 	    var DatePicker = __webpack_require__(17);
 
 	    function DateTimeExample(options) {
@@ -514,7 +511,7 @@
 	                diameter: 320,
 	                radialOpacity: -0.2
 	            },
-	            renderables: {
+	            createRenderables: {
 	                top: true,
 	                bottom: true
 	            },
@@ -1446,7 +1443,7 @@
 	    var LayoutNodeManager = __webpack_require__(49);
 	    var LayoutNode = __webpack_require__(50);
 	    var FlowLayoutNode = __webpack_require__(51);
-	    var Transform = __webpack_require__(25);
+	    var Transform = __webpack_require__(26);
 	    __webpack_require__(52);
 
 	    /**
@@ -2390,8 +2387,7 @@
 	     * @param {Object} [options.scrollController] Options that are passed to the underlying ScrollControllers.
 	     * @param {Object} [options.container] Container-options that are passed to the underlying ContainerSurface.
 	     * @param {Array.String} [options.classes] Css-classes that are added to the surfaces that are created.
-	     * @param {Object} [options.renderables] Options that specify which renderables should be created.
-	     * @param {Function} [options.createRenderable] Overridable function that is called when a renderable is created.
+	     * @param {Object} [options.createRenderables] Options that specify which renderables should be created.
 	     * @alias module:DatePicker
 	     */
 	    function DatePicker(options) {
@@ -2408,9 +2404,9 @@
 
 	        // create overlay layout + renderables
 	        this._overlayRenderables = {
-	            top: this.options.renderables.top ? _createRenderable.call(this, 'top') : undefined,
-	            middle: this.options.renderables.middle ? _createRenderable.call(this, 'middle') : undefined,
-	            bottom: this.options.renderables.bottom ? _createRenderable.call(this, 'bottom') : undefined
+	            top: _createRenderable.call(this, 'top'),
+	            middle: _createRenderable.call(this, 'middle'),
+	            bottom: _createRenderable.call(this, 'bottom')
 	        };
 	        _createOverlay.call(this);
 
@@ -2427,8 +2423,8 @@
 	            itemSize: 100,
 	            diameter: 500
 	        },
-	        renderables: {
-	            background: false,
+	        createRenderables: {
+	            item: true,
 	            top: false,
 	            middle: false,
 	            bottom: false
@@ -2450,11 +2446,11 @@
 	     *
 	     */
 	    function _createRenderable (id, data) {
-	        if (this.options.createRenderable) {
-	            var renderable = this.options.createRenderable.call(this, id, data);
-	            if (renderable) {
-	                return renderable;
-	            }
+	        var option = this.options.createRenderables[Array.isArray(id) ? id[0] : id];
+	        if (option instanceof Function) {
+	            return option.call(this, id, data);
+	        } else if (!option) {
+	            return undefined;
 	        }
 	        if ((data !== undefined) && (data instanceof Object)) {
 	            return data;
@@ -3831,7 +3827,7 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 	    var EventHandler = __webpack_require__(48);
 	    var OptionsManager = __webpack_require__(47);
-	    var RenderNode = __webpack_require__(26);
+	    var RenderNode = __webpack_require__(24);
 	    var Utility = __webpack_require__(44);
 
 	    /**
@@ -3945,7 +3941,180 @@
 	 */
 
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	    var Transform = __webpack_require__(25);
+	    var Entity = __webpack_require__(45);
+	    var SpecParser = __webpack_require__(59);
+
+	    /**
+	     * A wrapper for inserting a renderable component (like a Modifer or
+	     *   Surface) into the render tree.
+	     *
+	     * @class RenderNode
+	     * @constructor
+	     *
+	     * @param {Object} object Target renderable component
+	     */
+	    function RenderNode(object) {
+	        this._object = null;
+	        this._child = null;
+	        this._hasMultipleChildren = false;
+	        this._isRenderable = false;
+	        this._isModifier = false;
+
+	        this._resultCache = {};
+	        this._prevResults = {};
+
+	        this._childResult = null;
+
+	        if (object) this.set(object);
+	    }
+
+	    /**
+	     * Append a renderable to the list of this node's children.
+	     *   This produces a new RenderNode in the tree.
+	     *   Note: Does not double-wrap if child is a RenderNode already.
+	     *
+	     * @method add
+	     * @param {Object} child renderable object
+	     * @return {RenderNode} new render node wrapping child
+	     */
+	    RenderNode.prototype.add = function add(child) {
+	        var childNode = (child instanceof RenderNode) ? child : new RenderNode(child);
+	        if (this._child instanceof Array) this._child.push(childNode);
+	        else if (this._child) {
+	            this._child = [this._child, childNode];
+	            this._hasMultipleChildren = true;
+	            this._childResult = []; // to be used later
+	        }
+	        else this._child = childNode;
+
+	        return childNode;
+	    };
+
+	    /**
+	     * Return the single wrapped object.  Returns null if this node has multiple child nodes.
+	     *
+	     * @method get
+	     *
+	     * @return {Ojbect} contained renderable object
+	     */
+	    RenderNode.prototype.get = function get() {
+	        return this._object || (this._hasMultipleChildren ? null : (this._child ? this._child.get() : null));
+	    };
+
+	    /**
+	     * Overwrite the list of children to contain the single provided object
+	     *
+	     * @method set
+	     * @param {Object} child renderable object
+	     * @return {RenderNode} this render node, or child if it is a RenderNode
+	     */
+	    RenderNode.prototype.set = function set(child) {
+	        this._childResult = null;
+	        this._hasMultipleChildren = false;
+	        this._isRenderable = child.render ? true : false;
+	        this._isModifier = child.modify ? true : false;
+	        this._object = child;
+	        this._child = null;
+	        if (child instanceof RenderNode) return child;
+	        else return this;
+	    };
+
+	    /**
+	     * Get render size of contained object.
+	     *
+	     * @method getSize
+	     * @return {Array.Number} size of this or size of single child.
+	     */
+	    RenderNode.prototype.getSize = function getSize() {
+	        var result = null;
+	        var target = this.get();
+	        if (target && target.getSize) result = target.getSize();
+	        if (!result && this._child && this._child.getSize) result = this._child.getSize();
+	        return result;
+	    };
+
+	    // apply results of rendering this subtree to the document
+	    function _applyCommit(spec, context, cacheStorage) {
+	        var result = SpecParser.parse(spec, context);
+	        var keys = Object.keys(result);
+	        for (var i = 0; i < keys.length; i++) {
+	            var id = keys[i];
+	            var childNode = Entity.get(id);
+	            var commitParams = result[id];
+	            commitParams.allocator = context.allocator;
+	            var commitResult = childNode.commit(commitParams);
+	            if (commitResult) _applyCommit(commitResult, context, cacheStorage);
+	            else cacheStorage[id] = commitParams;
+	        }
+	    }
+
+	    /**
+	     * Commit the content change from this node to the document.
+	     *
+	     * @private
+	     * @method commit
+	     * @param {Context} context render context
+	     */
+	    RenderNode.prototype.commit = function commit(context) {
+	        // free up some divs from the last loop
+	        var prevKeys = Object.keys(this._prevResults);
+	        for (var i = 0; i < prevKeys.length; i++) {
+	            var id = prevKeys[i];
+	            if (this._resultCache[id] === undefined) {
+	                var object = Entity.get(id);
+	                if (object.cleanup) object.cleanup(context.allocator);
+	            }
+	        }
+
+	        this._prevResults = this._resultCache;
+	        this._resultCache = {};
+	        _applyCommit(this.render(), context, this._resultCache);
+	    };
+
+	    /**
+	     * Generate a render spec from the contents of the wrapped component.
+	     *
+	     * @private
+	     * @method render
+	     *
+	     * @return {Object} render specification for the component subtree
+	     *    only under this node.
+	     */
+	    RenderNode.prototype.render = function render() {
+	        if (this._isRenderable) return this._object.render();
+
+	        var result = null;
+	        if (this._hasMultipleChildren) {
+	            result = this._childResult;
+	            var children = this._child;
+	            for (var i = 0; i < children.length; i++) {
+	                result[i] = children[i].render();
+	            }
+	        }
+	        else if (this._child) result = this._child.render();
+
+	        return this._isModifier ? this._object.modify(result) : result;
+	    };
+
+	    module.exports = RenderNode;
+	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;/* This Source Code Form is subject to the terms of the Mozilla Public
+	 * License, v. 2.0. If a copy of the MPL was not distributed with this
+	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+	 *
+	 * Owner: mark@famo.us
+	 * @license MPL 2.0
+	 * @copyright Famous Industries, Inc. 2014
+	 */
+
+	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
+	    var Transform = __webpack_require__(26);
 
 	    /* TODO: remove these dependencies when deprecation complete */
 	    var Transitionable = __webpack_require__(60);
@@ -4372,7 +4541,7 @@
 
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* This Source Code Form is subject to the terms of the Mozilla Public
@@ -5060,179 +5229,6 @@
 
 
 /***/ },
-/* 26 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_RESULT__;/* This Source Code Form is subject to the terms of the Mozilla Public
-	 * License, v. 2.0. If a copy of the MPL was not distributed with this
-	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
-	 *
-	 * Owner: mark@famo.us
-	 * @license MPL 2.0
-	 * @copyright Famous Industries, Inc. 2014
-	 */
-
-	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	    var Entity = __webpack_require__(45);
-	    var SpecParser = __webpack_require__(59);
-
-	    /**
-	     * A wrapper for inserting a renderable component (like a Modifer or
-	     *   Surface) into the render tree.
-	     *
-	     * @class RenderNode
-	     * @constructor
-	     *
-	     * @param {Object} object Target renderable component
-	     */
-	    function RenderNode(object) {
-	        this._object = null;
-	        this._child = null;
-	        this._hasMultipleChildren = false;
-	        this._isRenderable = false;
-	        this._isModifier = false;
-
-	        this._resultCache = {};
-	        this._prevResults = {};
-
-	        this._childResult = null;
-
-	        if (object) this.set(object);
-	    }
-
-	    /**
-	     * Append a renderable to the list of this node's children.
-	     *   This produces a new RenderNode in the tree.
-	     *   Note: Does not double-wrap if child is a RenderNode already.
-	     *
-	     * @method add
-	     * @param {Object} child renderable object
-	     * @return {RenderNode} new render node wrapping child
-	     */
-	    RenderNode.prototype.add = function add(child) {
-	        var childNode = (child instanceof RenderNode) ? child : new RenderNode(child);
-	        if (this._child instanceof Array) this._child.push(childNode);
-	        else if (this._child) {
-	            this._child = [this._child, childNode];
-	            this._hasMultipleChildren = true;
-	            this._childResult = []; // to be used later
-	        }
-	        else this._child = childNode;
-
-	        return childNode;
-	    };
-
-	    /**
-	     * Return the single wrapped object.  Returns null if this node has multiple child nodes.
-	     *
-	     * @method get
-	     *
-	     * @return {Ojbect} contained renderable object
-	     */
-	    RenderNode.prototype.get = function get() {
-	        return this._object || (this._hasMultipleChildren ? null : (this._child ? this._child.get() : null));
-	    };
-
-	    /**
-	     * Overwrite the list of children to contain the single provided object
-	     *
-	     * @method set
-	     * @param {Object} child renderable object
-	     * @return {RenderNode} this render node, or child if it is a RenderNode
-	     */
-	    RenderNode.prototype.set = function set(child) {
-	        this._childResult = null;
-	        this._hasMultipleChildren = false;
-	        this._isRenderable = child.render ? true : false;
-	        this._isModifier = child.modify ? true : false;
-	        this._object = child;
-	        this._child = null;
-	        if (child instanceof RenderNode) return child;
-	        else return this;
-	    };
-
-	    /**
-	     * Get render size of contained object.
-	     *
-	     * @method getSize
-	     * @return {Array.Number} size of this or size of single child.
-	     */
-	    RenderNode.prototype.getSize = function getSize() {
-	        var result = null;
-	        var target = this.get();
-	        if (target && target.getSize) result = target.getSize();
-	        if (!result && this._child && this._child.getSize) result = this._child.getSize();
-	        return result;
-	    };
-
-	    // apply results of rendering this subtree to the document
-	    function _applyCommit(spec, context, cacheStorage) {
-	        var result = SpecParser.parse(spec, context);
-	        var keys = Object.keys(result);
-	        for (var i = 0; i < keys.length; i++) {
-	            var id = keys[i];
-	            var childNode = Entity.get(id);
-	            var commitParams = result[id];
-	            commitParams.allocator = context.allocator;
-	            var commitResult = childNode.commit(commitParams);
-	            if (commitResult) _applyCommit(commitResult, context, cacheStorage);
-	            else cacheStorage[id] = commitParams;
-	        }
-	    }
-
-	    /**
-	     * Commit the content change from this node to the document.
-	     *
-	     * @private
-	     * @method commit
-	     * @param {Context} context render context
-	     */
-	    RenderNode.prototype.commit = function commit(context) {
-	        // free up some divs from the last loop
-	        var prevKeys = Object.keys(this._prevResults);
-	        for (var i = 0; i < prevKeys.length; i++) {
-	            var id = prevKeys[i];
-	            if (this._resultCache[id] === undefined) {
-	                var object = Entity.get(id);
-	                if (object.cleanup) object.cleanup(context.allocator);
-	            }
-	        }
-
-	        this._prevResults = this._resultCache;
-	        this._resultCache = {};
-	        _applyCommit(this.render(), context, this._resultCache);
-	    };
-
-	    /**
-	     * Generate a render spec from the contents of the wrapped component.
-	     *
-	     * @private
-	     * @method render
-	     *
-	     * @return {Object} render specification for the component subtree
-	     *    only under this node.
-	     */
-	    RenderNode.prototype.render = function render() {
-	        if (this._isRenderable) return this._object.render();
-
-	        var result = null;
-	        if (this._hasMultipleChildren) {
-	            result = this._childResult;
-	            var children = this._child;
-	            for (var i = 0; i < children.length; i++) {
-	                result[i] = children[i].render();
-	            }
-	        }
-	        else if (this._child) result = this._child.render();
-
-	        return this._isModifier ? this._object.modify(result) : result;
-	    };
-
-	    module.exports = RenderNode;
-	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ },
 /* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -5487,7 +5483,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports =
-		"\n.date.background {\n  background-color: #FFFCFC;\n}\n\n.ff-datepicker.item.date {\n  font-size: 36px;\n  font-weight: 100;\n}\n\n.ff-datepicker.top.date {\n  background-color: rgba(255, 255, 255, 0.6);\n  border-bottom: 1px solid #777777;\n}\n\n.ff-datepicker.bottom.date {\n  background-color: rgba(255, 255, 255, 0.6);\n  border-top: 1px solid #777777;\n}\n";
+		"\n.clock.background {\n \tbackground-color: black;\n}\n\n.ff-datepicker.clock.item, .clock-separator {\n\tcolor: white;\n\ttext-align: center;\n\tfont-size: 70px;\n\tline-height: 80px;\n}\n\n.clock-separator-1 {\n\ttext-align: right;\n}\n\n.clock-separator-2 {\n\ttext-align: left;\n}";
 
 /***/ },
 /* 31 */
@@ -5508,7 +5504,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports =
-		"\n.time.background {\n  background-color: #FFFCFC;\n}\n\n.ff-datepicker.item.time {\n  font-size: 60px;\n  font-weight: normal;\n}\n.ff-datepicker.top.time {\n  background-color: rgba(255, 255, 255, 0.6);\n  border-bottom: 1px solid #777777;\n}\n\n.ff-datepicker.bottom.time {\n  background-color: rgba(255, 255, 255, 0.6);\n  border-top: 1px solid #777777;\n}\n";
+		"\n.date.background {\n  background-color: #FFFCFC;\n}\n\n.ff-datepicker.item.date {\n  font-size: 36px;\n  font-weight: 100;\n}\n\n.ff-datepicker.top.date {\n  background-color: rgba(255, 255, 255, 0.6);\n  border-bottom: 1px solid #777777;\n}\n\n.ff-datepicker.bottom.date {\n  background-color: rgba(255, 255, 255, 0.6);\n  border-top: 1px solid #777777;\n}\n";
 
 /***/ },
 /* 33 */
@@ -5529,7 +5525,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports =
-		"\n.clock.background {\n \tbackground-color: black;\n}\n\n.ff-datepicker.clock.item, .clock-separator {\n\tcolor: white;\n\ttext-align: center;\n\tfont-size: 70px;\n\tline-height: 80px;\n}\n\n.clock-separator-1 {\n\ttext-align: right;\n}\n\n.clock-separator-2 {\n\ttext-align: left;\n}";
+		"\n.time.background {\n  background-color: #FFFCFC;\n}\n\n.ff-datepicker.item.time {\n  font-size: 60px;\n  font-weight: normal;\n}\n.ff-datepicker.top.time {\n  background-color: rgba(255, 255, 255, 0.6);\n  border-bottom: 1px solid #777777;\n}\n\n.ff-datepicker.bottom.time {\n  background-color: rgba(255, 255, 255, 0.6);\n  border-top: 1px solid #777777;\n}\n";
 
 /***/ },
 /* 35 */
@@ -6578,7 +6574,7 @@
 	        if (!locales[name] && hasModule) {
 	            try {
 	                oldLocale = moment.locale();
-	                __webpack_require__(69)("./" + name);
+	                __webpack_require__(62)("./" + name);
 	                // because defineLocale currently also sets the global locale, we want to undo that for lazy loaded locales
 	                moment.locale(oldLocale);
 	            } catch (e) { }
@@ -9134,15 +9130,15 @@
 	    var FlowLayoutNode = __webpack_require__(51);
 	    var LayoutNodeManager = __webpack_require__(49);
 	    var ContainerSurface = __webpack_require__(53);
-	    var Transform = __webpack_require__(25);
+	    var Transform = __webpack_require__(26);
 	    var EventHandler = __webpack_require__(48);
-	    var Group = __webpack_require__(62);
-	    var Vector = __webpack_require__(63);
-	    var PhysicsEngine = __webpack_require__(64);
-	    var Particle = __webpack_require__(65);
-	    var Drag = __webpack_require__(66);
-	    var Spring = __webpack_require__(67);
-	    var ScrollSync = __webpack_require__(68);
+	    var Group = __webpack_require__(63);
+	    var Vector = __webpack_require__(64);
+	    var PhysicsEngine = __webpack_require__(65);
+	    var Particle = __webpack_require__(66);
+	    var Drag = __webpack_require__(67);
+	    var Spring = __webpack_require__(68);
+	    var ScrollSync = __webpack_require__(69);
 	    var ViewSequence = __webpack_require__(46);
 
 	    /**
@@ -9437,7 +9433,7 @@
 	    function _mouseDown(event) {
 
 	        // Check whether mouse-scrolling is enabled
-	        if (!this.options.mouseMove || !this.options.enabled) {
+	        if (!this.options.mouseMove) {
 	            return;
 	        }
 
@@ -9521,11 +9517,6 @@
 	                event2.target.removeEventListener('touchend', this._touchEndEventListener);
 	                _touchEnd.call(this, event2);
 	            }.bind(this);
-	        }
-
-	        // Ignore the touch when not enabled
-	        if (!this.options.enabled) {
-	            return;
 	        }
 
 	        // Remove any touches that are no longer active
@@ -13038,7 +13029,7 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 
 	    // import dependencies
-	    var Transform = __webpack_require__(25);
+	    var Transform = __webpack_require__(26);
 	    var LayoutUtility = __webpack_require__(41);
 
 	    /**
@@ -13240,11 +13231,11 @@
 
 	    // import dependencies
 	    var OptionsManager = __webpack_require__(47);
-	    var Transform = __webpack_require__(25);
-	    var Vector = __webpack_require__(63);
-	    var Particle = __webpack_require__(65);
-	    var Spring = __webpack_require__(67);
-	    var PhysicsEngine = __webpack_require__(64);
+	    var Transform = __webpack_require__(26);
+	    var Vector = __webpack_require__(64);
+	    var Particle = __webpack_require__(66);
+	    var Spring = __webpack_require__(68);
+	    var PhysicsEngine = __webpack_require__(65);
 	    var LayoutNode = __webpack_require__(50);
 	    var Transitionable = __webpack_require__(60);
 
@@ -14884,10 +14875,10 @@
 	 */
 
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	    var RenderNode = __webpack_require__(26);
+	    var RenderNode = __webpack_require__(24);
 	    var EventHandler = __webpack_require__(48);
 	    var ElementAllocator = __webpack_require__(72);
-	    var Transform = __webpack_require__(25);
+	    var Transform = __webpack_require__(26);
 	    var Transitionable = __webpack_require__(60);
 
 	    var _zeroZero = [0, 0];
@@ -15125,7 +15116,7 @@
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 	    var Entity = __webpack_require__(45);
 	    var EventHandler = __webpack_require__(48);
-	    var Transform = __webpack_require__(25);
+	    var Transform = __webpack_require__(26);
 
 	    var usePrefix = !('transform' in document.documentElement.style);
 	    var devicePixelRatio = window.devicePixelRatio || 1;
@@ -15457,7 +15448,7 @@
 	 */
 
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	    var Transform = __webpack_require__(25);
+	    var Transform = __webpack_require__(26);
 
 	    /**
 	     *
@@ -15868,7 +15859,7 @@
 
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 	    var Transitionable = __webpack_require__(60);
-	    var Transform = __webpack_require__(25);
+	    var Transform = __webpack_require__(26);
 	    var Utility = __webpack_require__(44);
 
 	    /**
@@ -16093,6 +16084,186 @@
 /* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var map = {
+		"./af": 75,
+		"./af.js": 75,
+		"./ar": 79,
+		"./ar-ma": 76,
+		"./ar-ma.js": 76,
+		"./ar-sa": 77,
+		"./ar-sa.js": 77,
+		"./ar-tn": 78,
+		"./ar-tn.js": 78,
+		"./ar.js": 79,
+		"./az": 80,
+		"./az.js": 80,
+		"./be": 81,
+		"./be.js": 81,
+		"./bg": 82,
+		"./bg.js": 82,
+		"./bn": 83,
+		"./bn.js": 83,
+		"./bo": 84,
+		"./bo.js": 84,
+		"./br": 85,
+		"./br.js": 85,
+		"./bs": 86,
+		"./bs.js": 86,
+		"./ca": 87,
+		"./ca.js": 87,
+		"./cs": 88,
+		"./cs.js": 88,
+		"./cv": 89,
+		"./cv.js": 89,
+		"./cy": 90,
+		"./cy.js": 90,
+		"./da": 91,
+		"./da.js": 91,
+		"./de": 93,
+		"./de-at": 92,
+		"./de-at.js": 92,
+		"./de.js": 93,
+		"./el": 94,
+		"./el.js": 94,
+		"./en-au": 95,
+		"./en-au.js": 95,
+		"./en-ca": 96,
+		"./en-ca.js": 96,
+		"./en-gb": 97,
+		"./en-gb.js": 97,
+		"./eo": 98,
+		"./eo.js": 98,
+		"./es": 99,
+		"./es.js": 99,
+		"./et": 100,
+		"./et.js": 100,
+		"./eu": 101,
+		"./eu.js": 101,
+		"./fa": 102,
+		"./fa.js": 102,
+		"./fi": 103,
+		"./fi.js": 103,
+		"./fo": 104,
+		"./fo.js": 104,
+		"./fr": 106,
+		"./fr-ca": 105,
+		"./fr-ca.js": 105,
+		"./fr.js": 106,
+		"./fy": 107,
+		"./fy.js": 107,
+		"./gl": 108,
+		"./gl.js": 108,
+		"./he": 109,
+		"./he.js": 109,
+		"./hi": 110,
+		"./hi.js": 110,
+		"./hr": 111,
+		"./hr.js": 111,
+		"./hu": 112,
+		"./hu.js": 112,
+		"./hy-am": 113,
+		"./hy-am.js": 113,
+		"./id": 114,
+		"./id.js": 114,
+		"./is": 115,
+		"./is.js": 115,
+		"./it": 116,
+		"./it.js": 116,
+		"./ja": 117,
+		"./ja.js": 117,
+		"./ka": 118,
+		"./ka.js": 118,
+		"./km": 119,
+		"./km.js": 119,
+		"./ko": 120,
+		"./ko.js": 120,
+		"./lb": 121,
+		"./lb.js": 121,
+		"./lt": 122,
+		"./lt.js": 122,
+		"./lv": 123,
+		"./lv.js": 123,
+		"./mk": 124,
+		"./mk.js": 124,
+		"./ml": 125,
+		"./ml.js": 125,
+		"./mr": 126,
+		"./mr.js": 126,
+		"./ms-my": 127,
+		"./ms-my.js": 127,
+		"./my": 128,
+		"./my.js": 128,
+		"./nb": 129,
+		"./nb.js": 129,
+		"./ne": 130,
+		"./ne.js": 130,
+		"./nl": 131,
+		"./nl.js": 131,
+		"./nn": 132,
+		"./nn.js": 132,
+		"./pl": 133,
+		"./pl.js": 133,
+		"./pt": 135,
+		"./pt-br": 134,
+		"./pt-br.js": 134,
+		"./pt.js": 135,
+		"./ro": 136,
+		"./ro.js": 136,
+		"./ru": 137,
+		"./ru.js": 137,
+		"./sk": 138,
+		"./sk.js": 138,
+		"./sl": 139,
+		"./sl.js": 139,
+		"./sq": 140,
+		"./sq.js": 140,
+		"./sr": 142,
+		"./sr-cyrl": 141,
+		"./sr-cyrl.js": 141,
+		"./sr.js": 142,
+		"./sv": 143,
+		"./sv.js": 143,
+		"./ta": 144,
+		"./ta.js": 144,
+		"./th": 145,
+		"./th.js": 145,
+		"./tl-ph": 146,
+		"./tl-ph.js": 146,
+		"./tr": 147,
+		"./tr.js": 147,
+		"./tzm": 149,
+		"./tzm-latn": 148,
+		"./tzm-latn.js": 148,
+		"./tzm.js": 149,
+		"./uk": 150,
+		"./uk.js": 150,
+		"./uz": 151,
+		"./uz.js": 151,
+		"./vi": 152,
+		"./vi.js": 152,
+		"./zh-cn": 153,
+		"./zh-cn.js": 153,
+		"./zh-tw": 154,
+		"./zh-tw.js": 154
+	};
+	function webpackContext(req) {
+		return __webpack_require__(webpackContextResolve(req));
+	};
+	function webpackContextResolve(req) {
+		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
+	};
+	webpackContext.keys = function webpackContextKeys() {
+		return Object.keys(map);
+	};
+	webpackContext.resolve = webpackContextResolve;
+	module.exports = webpackContext;
+	webpackContext.id = 62;
+
+
+/***/ },
+/* 63 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* This Source Code Form is subject to the terms of the Mozilla Public
 	 * License, v. 2.0. If a copy of the MPL was not distributed with this
 	 * file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -16104,7 +16275,7 @@
 
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 	    var Context = __webpack_require__(57);
-	    var Transform = __webpack_require__(25);
+	    var Transform = __webpack_require__(26);
 	    var Surface = __webpack_require__(22);
 
 	    /**
@@ -16220,7 +16391,7 @@
 
 
 /***/ },
-/* 63 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* This Source Code Form is subject to the terms of the Mozilla Public
@@ -16606,7 +16777,7 @@
 
 
 /***/ },
-/* 64 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* This Source Code Form is subject to the terms of the Mozilla Public
@@ -17139,7 +17310,7 @@
 
 
 /***/ },
-/* 65 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* This Source Code Form is subject to the terms of the Mozilla Public
@@ -17152,8 +17323,8 @@
 	 */
 
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	    var Vector = __webpack_require__(63);
-	    var Transform = __webpack_require__(25);
+	    var Vector = __webpack_require__(64);
+	    var Transform = __webpack_require__(26);
 	    var EventHandler = __webpack_require__(48);
 	    var Integrator = __webpack_require__(156);
 
@@ -17532,7 +17703,7 @@
 
 
 /***/ },
-/* 66 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* This Source Code Form is subject to the terms of the Mozilla Public
@@ -17657,7 +17828,7 @@
 
 
 /***/ },
-/* 67 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* This Source Code Form is subject to the terms of the Mozilla Public
@@ -17673,7 +17844,7 @@
 
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
 	    var Force = __webpack_require__(157);
-	    var Vector = __webpack_require__(63);
+	    var Vector = __webpack_require__(64);
 
 	    /**
 	     *  A force that moves a physics body to a location with a spring motion.
@@ -17930,7 +18101,7 @@
 
 
 /***/ },
-/* 68 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* This Source Code Form is subject to the terms of the Mozilla Public
@@ -18130,186 +18301,6 @@
 
 	    module.exports = ScrollSync;
 	}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ },
-/* 69 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var map = {
-		"./af": 75,
-		"./af.js": 75,
-		"./ar": 79,
-		"./ar-ma": 76,
-		"./ar-ma.js": 76,
-		"./ar-sa": 77,
-		"./ar-sa.js": 77,
-		"./ar-tn": 78,
-		"./ar-tn.js": 78,
-		"./ar.js": 79,
-		"./az": 80,
-		"./az.js": 80,
-		"./be": 81,
-		"./be.js": 81,
-		"./bg": 82,
-		"./bg.js": 82,
-		"./bn": 83,
-		"./bn.js": 83,
-		"./bo": 84,
-		"./bo.js": 84,
-		"./br": 85,
-		"./br.js": 85,
-		"./bs": 86,
-		"./bs.js": 86,
-		"./ca": 87,
-		"./ca.js": 87,
-		"./cs": 88,
-		"./cs.js": 88,
-		"./cv": 89,
-		"./cv.js": 89,
-		"./cy": 90,
-		"./cy.js": 90,
-		"./da": 91,
-		"./da.js": 91,
-		"./de": 93,
-		"./de-at": 92,
-		"./de-at.js": 92,
-		"./de.js": 93,
-		"./el": 94,
-		"./el.js": 94,
-		"./en-au": 95,
-		"./en-au.js": 95,
-		"./en-ca": 96,
-		"./en-ca.js": 96,
-		"./en-gb": 97,
-		"./en-gb.js": 97,
-		"./eo": 98,
-		"./eo.js": 98,
-		"./es": 99,
-		"./es.js": 99,
-		"./et": 100,
-		"./et.js": 100,
-		"./eu": 101,
-		"./eu.js": 101,
-		"./fa": 102,
-		"./fa.js": 102,
-		"./fi": 103,
-		"./fi.js": 103,
-		"./fo": 104,
-		"./fo.js": 104,
-		"./fr": 106,
-		"./fr-ca": 105,
-		"./fr-ca.js": 105,
-		"./fr.js": 106,
-		"./fy": 107,
-		"./fy.js": 107,
-		"./gl": 108,
-		"./gl.js": 108,
-		"./he": 109,
-		"./he.js": 109,
-		"./hi": 110,
-		"./hi.js": 110,
-		"./hr": 111,
-		"./hr.js": 111,
-		"./hu": 112,
-		"./hu.js": 112,
-		"./hy-am": 113,
-		"./hy-am.js": 113,
-		"./id": 114,
-		"./id.js": 114,
-		"./is": 115,
-		"./is.js": 115,
-		"./it": 116,
-		"./it.js": 116,
-		"./ja": 117,
-		"./ja.js": 117,
-		"./ka": 118,
-		"./ka.js": 118,
-		"./km": 119,
-		"./km.js": 119,
-		"./ko": 120,
-		"./ko.js": 120,
-		"./lb": 121,
-		"./lb.js": 121,
-		"./lt": 122,
-		"./lt.js": 122,
-		"./lv": 123,
-		"./lv.js": 123,
-		"./mk": 124,
-		"./mk.js": 124,
-		"./ml": 125,
-		"./ml.js": 125,
-		"./mr": 126,
-		"./mr.js": 126,
-		"./ms-my": 127,
-		"./ms-my.js": 127,
-		"./my": 128,
-		"./my.js": 128,
-		"./nb": 129,
-		"./nb.js": 129,
-		"./ne": 130,
-		"./ne.js": 130,
-		"./nl": 131,
-		"./nl.js": 131,
-		"./nn": 132,
-		"./nn.js": 132,
-		"./pl": 133,
-		"./pl.js": 133,
-		"./pt": 135,
-		"./pt-br": 134,
-		"./pt-br.js": 134,
-		"./pt.js": 135,
-		"./ro": 136,
-		"./ro.js": 136,
-		"./ru": 137,
-		"./ru.js": 137,
-		"./sk": 138,
-		"./sk.js": 138,
-		"./sl": 139,
-		"./sl.js": 139,
-		"./sq": 140,
-		"./sq.js": 140,
-		"./sr": 142,
-		"./sr-cyrl": 141,
-		"./sr-cyrl.js": 141,
-		"./sr.js": 142,
-		"./sv": 143,
-		"./sv.js": 143,
-		"./ta": 144,
-		"./ta.js": 144,
-		"./th": 145,
-		"./th.js": 145,
-		"./tl-ph": 146,
-		"./tl-ph.js": 146,
-		"./tr": 147,
-		"./tr.js": 147,
-		"./tzm": 149,
-		"./tzm-latn": 148,
-		"./tzm-latn.js": 148,
-		"./tzm.js": 149,
-		"./uk": 150,
-		"./uk.js": 150,
-		"./uz": 151,
-		"./uz.js": 151,
-		"./vi": 152,
-		"./vi.js": 152,
-		"./zh-cn": 153,
-		"./zh-cn.js": 153,
-		"./zh-tw": 154,
-		"./zh-tw.js": 154
-	};
-	function webpackContext(req) {
-		return __webpack_require__(webpackContextResolve(req));
-	};
-	function webpackContextResolve(req) {
-		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
-	};
-	webpackContext.keys = function webpackContextKeys() {
-		return Object.keys(map);
-	};
-	webpackContext.resolve = webpackContextResolve;
-	module.exports = webpackContext;
-	webpackContext.id = 69;
 
 
 /***/ },
@@ -27155,7 +27146,7 @@
 	 */
 
 	!(__WEBPACK_AMD_DEFINE_RESULT__ = function(require, exports, module) {
-	    var Vector = __webpack_require__(63);
+	    var Vector = __webpack_require__(64);
 	    var EventHandler = __webpack_require__(48);
 
 	    /**
