@@ -95,7 +95,7 @@ var datePicker = new DatePicker({
 
 ## Custom renderables
 
-You can also create or use your own renderables, in that case specify a `Function`
+To create or use your own renderables, specify a factory `Function`
 instead of `true/false`:
 
 ```javascript
