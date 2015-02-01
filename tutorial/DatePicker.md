@@ -19,6 +19,9 @@ ScrollControllers using the WheelLayout layout to form a single date/time picker
     - [Time example](../src/time/TimeExample.js) [(CSS)](../src/time/styles.css)
     - [Clock example](../src/clock/ClockExample.js) [(CSS)](../src/clock/styles.css)
 - [Renderables & CSS-classes](#renderables--css-classes)
+    - [Custom renderables](#custom-renderables)
+    - [CSS classes](#css-classes)
+    - [Overview of renderables and their CSS-selectors](#overview-of-renderables-and-their-css-selectors)
 - [Components](#components)
     - [Customizing components](#customizing-components)
 - [Getting and setting the selected date](#getting-and-setting-the-selected-date)
@@ -27,7 +30,6 @@ ScrollControllers using the WheelLayout layout to form a single date/time picker
 - [Internationalisation & custom formatting](#internationalisation--custom-formatting)
 - [Disabling user-input](#disabling-user-input)
 - [Disabling item looping](#disabling-item-looping)
-- [Custom renderables](#custom-renderables)
 
 
 # Getting started
@@ -75,21 +77,44 @@ this.add(datePicker); // add to the render-tree
 ```
 
 
-# Renderables & CSS-classes
+# Renderables & CSS classes
 
 By default, the DatePicker only creates renderables (Surfaces) for the scrollable wheels.
 You can choose to enable other renderables, such as the top, bottom and middle-overlays.
-To enable these renderables, set their values in the `renderables` option to `true`.
+To enable these renderables, set their values in the `createRenderables` option to `true`.
 
 ```javascript
 var datePicker = new DatePicker({
-    renderables: [
+    createRenderables: {
         top: true,
         middle: true
         bottom: true
-    ]
-})
+    }
+});
 ```
+
+## Custom renderables
+
+You can also create or use your own renderables, in that case specify a `Function`
+instead of `true/false`:
+
+```javascript
+var datePicker = new DatePicker({
+    createRenderables: {
+        item: function(id, data) {
+            return new Surface({
+                content: data,
+                properties: {
+                    background: 'rgba(255, 255, 255, 0.5)',
+                    color: '#222222'
+                }
+            })
+        }
+    }
+});
+```
+
+## CSS classes
 
 When a Surface is created, it is assigned multiple css-classes which can be
 styled from a css-file. The `widgets/styles.css` already contains various styles
@@ -138,11 +163,11 @@ var datePicker = new DatePicker({
         radialOpacity: -0.5
     },
     classes: ['white'],
-    renderables: [
+    createRenderables: {
         top: true,
         bottom: true
-    ]
-})
+    }
+});
 ```
 
 CSS:
@@ -340,32 +365,6 @@ datePicker.setComponents([
         loop: false
     })
 ]);
-```
-
-
-# Custom renderables
-
-By default the DatePicker creates its own surfaces that make up the date-picker.
-To override this behavior and create/use your own renderables, specify the `createRenderable`
-option in the constructor and use your own creator function:
-
-```javascript
-var datePicker = new DatePicker({
-    renderables: {
-        top: true,
-        bottom: true
-    },
-    createRenderable: function (id, data) {
-        if ((id === 'top') || (id === 'bottom')) {
-            // create our own top & bottom surfaces
-            return new Surface({
-                properties: {
-                    background: 'rgba(255, 255, 255, 0.5)'
-                }
-            });
-        }
-    }
-});
 ```
 
 *© 2015 IjzerenHein*

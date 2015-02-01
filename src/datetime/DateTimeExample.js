@@ -40,7 +40,7 @@ define(function(require, exports, module) {
                 diameter: 320,
                 radialOpacity: -0.2
             },
-            renderables: {
+            createRenderables: {
                 top: true,
                 bottom: true
             },

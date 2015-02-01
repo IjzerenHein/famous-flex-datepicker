@@ -51,14 +51,11 @@ define(function(require, exports, module) {
                 enabled: false
             },
             classes: ['clock'],
-            renderables: {
-                middle: true
-            },
-            createRenderable: function(id, data) {
-                if (id === 'middle') {
+            createRenderables: {
+                middle: function() {
                     return this.separators;
-                }
-            }.bind(this)
+                }.bind(this)
+            }
         });
         this.datePicker.setComponents([
             new DatePicker.Component.Hour({sizeRatio: this.options.sizeRatios[0]}),
