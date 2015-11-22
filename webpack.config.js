@@ -41,7 +41,7 @@ var config = {
   resolve: {
     alias: {
       'famous-flex': 'famous-flex/src',
-      'famous-flex-datepicker': 'famous-flex-datepicker/src'
+      'famous': path.join(__dirname, 'node_modules/famous')
     }
   },
   plugins:[
