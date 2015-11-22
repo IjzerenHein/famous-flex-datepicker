@@ -52,6 +52,26 @@ define(function(require) {
     _addExample(new ClockExample(), 'Clock example');
     scrollView.setDataSource(dateWheels);
 
+    /**
+     * FIX for famous-bug: https://github.com/Famous/famous/issues/673
+     *
+     * There is a bug in recall which causes the latest setContent()
+     * call to be ignored, if the element is removed from the DOM in
+     * the next render-cycle.
+     */
+    Surface.prototype.recall = function recall(target) {
+        if (!this._contentDirty) {
+            var df = document.createDocumentFragment();
+            while (target.hasChildNodes()) {
+                df.appendChild(target.firstChild);
+            }
+            this.setContent(df);
+        }
+        else {
+            this._contentDirty = true;
+        }
+    };
+
     //
     // Footer image
     //
