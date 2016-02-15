@@ -28,6 +28,7 @@ define(function(require) {
     var BkImageSurface = require('famous-bkimagesurface/BkImageSurface');
     var LayoutController = require('famous-flex/LayoutController');
     var HeaderFooterLayout = require('famous-flex/layouts/HeaderFooterLayout');
+    var moment = require('moment');
 
     // demos
     var ClockExample = require('./clock/ClockExample');
@@ -46,9 +47,9 @@ define(function(require) {
 
     // Add examples to scrollview
     var dateWheels = [];
-    _addExample(new DateTimeExample(), 'Date + Time example');
-    _addExample(new DateExample(), 'Date example');
-    _addExample(new TimeExample(), 'Time example');
+    _addExample(new DateTimeExample(), 'Date + Time example', true);
+    _addExample(new DateExample(), 'Date example', true);
+    _addExample(new TimeExample(), 'Time example', true);
     _addExample(new ClockExample(), 'Clock example');
     scrollView.setDataSource(dateWheels);
 
@@ -119,7 +120,7 @@ define(function(require) {
     //
     // Helper function for adding samples
     //
-    function _addExample(dateWheel, name) {
+    function _addExample(dateWheel, name, debug) {
         var header = new Surface({
             content: name,
             classes: ['header']
@@ -136,21 +137,24 @@ define(function(require) {
             }
         });
         dateWheels.push(lc);
+
+        if (debug) {
+            dateWheel.datePicker.on('scrollstart', function(event) {
+                console.log('DatePicker -> scrollstart');
+            });
+            dateWheel.datePicker.on('scrollend', function(event) {
+                console.log('DatePicker -> scrollend (' + formatDate(event.date) + ')');
+            });
+            dateWheel.datePicker.on('datechange', function(event) {
+                console.log('DatePicker -> datechange (' + formatDate(event.date) + ')');
+            });
+        }
     }
 
     //
     // Log events
     //
-    /*function formatDate(date) {
+    function formatDate(date) {
         return moment(date).format('YYYY-MMM-D ddd hh:mm');
     }
-    dateWheel.on('scrollstart', function(event) {
-        console.log('DateWheel -> scrollstart');
-    });
-    dateWheel.on('scrollend', function(event) {
-        console.log('DateWheel -> scrollend (' + formatDate(event.date) + ')');
-    });
-    dateWheel.on('datechange', function(event) {
-        console.log('DateWheel -> datechange (' + formatDate(event.date) + ')');
-    });*/
 });
